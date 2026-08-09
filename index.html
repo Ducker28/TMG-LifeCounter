@@ -1,4 +1,878 @@
-function renderGame() {
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MTG Life Counter</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 0. INTRO / SPLASH SCREEN ANIMACE */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #0a0a0c;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            cursor: pointer;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .wave-text {
+            display: flex;
+            gap: 2px;
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .wave-text span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(40px) scale(0.8);
+            animation: waveIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(211, 32, 42, 0.8);
+        }
+
+        .wave-text span:nth-child(1) { animation-delay: 0.1s; }
+        .wave-text span:nth-child(2) { animation-delay: 0.2s; }
+        .wave-text span:nth-child(3) { animation-delay: 0.3s; }
+        .wave-text span:nth-child(4) { animation-delay: 0.4s; }
+        .wave-text span:nth-child(5) { animation-delay: 0.5s; }
+        .wave-text span:nth-child(6) { animation-delay: 0.6s; }
+        .wave-text span:nth-child(7) { animation-delay: 0.7s; }
+
+        @keyframes waveIn {
+            0% { opacity: 0; transform: translateY(40px) scale(0.8); }
+            60% { transform: translateY(-10px) scale(1.1); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .card-fan {
+            position: relative;
+            width: 120px;
+            height: 90px;
+        }
+
+        .card {
+            position: absolute;
+            width: 50px;
+            height: 75px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            background: linear-gradient(135deg, #2a2a2a, #111111);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            left: 35px;
+            top: 0;
+            transform-origin: bottom center;
+            opacity: 0;
+            animation: fanOut 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation-delay: 0.8s;
+        }
+
+        .card-1 { background: linear-gradient(135deg, #d3202a, #5a0000); }
+        .card-2 { background: linear-gradient(135deg, #0e68ab, #002b52); }
+        .card-3 { background: linear-gradient(135deg, #00733e, #003312); }
+
+        @keyframes fanOut {
+            0% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+            100% { opacity: 1; }
+        }
+
+        #splash-screen:not(.fade-out) .card-1 { transform: rotate(-25deg) translateX(-25px); }
+        #splash-screen:not(.fade-out) .card-2 { transform: rotate(0deg) translateY(-8px); }
+        #splash-screen:not(.fade-out) .card-3 { transform: rotate(25deg) translateX(25px); }
+
+        /* SEKCE OBRAZOVEK */
+        .screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .screen.active { display: flex; }
+
+        h1 { font-size: 1.8rem; margin-bottom: 25px; color: #e0e0e0; }
+        h2 { font-size: 1.4rem; margin-bottom: 15px; color: #aaa; }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .menu-btn {
+            background: #2a2a2a;
+            color: #fff;
+            border: 2px solid #444;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .menu-btn:active {
+            background: #444;
+            transform: scale(0.98);
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 320px;
+            margin-top: 15px;
+        }
+
+        .color-btn {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .color-btn.selected {
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        /* MTG Barvy Many */
+        .bg-white { background-color: #f8f6d8; color: #111; }
+        .bg-blue  { background-color: #0e68ab; color: #fff; }
+        .bg-black { background-color: #211e1f; color: #fff; }
+        .bg-red   { background-color: #d3202a; color: #fff; }
+        .bg-green { background-color: #00733e; color: #fff; }
+
+        /* HERNÍ OBRAZOVKA */
+        #game-screen {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            padding: 0;
+            touch-action: none;
+        }
+
+        /* PLOVOUCÍ DROPDOWN MENU */
+        .menu-container {
+            position: absolute;
+            top: max(12px, env(safe-area-inset-top));
+            right: max(12px, env(safe-area-inset-right));
+            z-index: 50;
+        }
+
+        .dots-btn {
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            line-height: 1;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 48px;
+            right: 0;
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 8px;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 130px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-item {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:active {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        #grid {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            gap: 2px;
+            background: #000;
+        }
+
+        .players-2 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr; }
+        .players-3 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+        .players-3 .player-card:nth-child(3) { grid-column: span 2; }
+        .players-4 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+
+        @media (orientation: landscape) {
+            .players-2 { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; }
+            .players-3 { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr 1fr; }
+            .players-3 .player-card:nth-child(3) { grid-column: span 1; }
+            .players-4 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+        }
+
+        .player-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .player-card.dragging {
+            opacity: 0.8;
+            transform: scale(0.95);
+            z-index: 100;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+            border: 2px solid #fff;
+        }
+
+        .player-card.drag-over {
+            box-shadow: inset 0 0 0 4px #ffffff;
+            filter: brightness(1.2);
+        }
+
+        .rotate-180 { transform: rotate(180deg); }
+        .player-card.dragging.rotate-180 { transform: rotate(180deg) scale(0.95); }
+
+        .touch-zone {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            display: flex;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 300;
+            opacity: 0.2;
+            z-index: 1;
+        }
+
+        .touch-minus { left: 0; justify-content: flex-start; padding-left: 15px; }
+        .touch-plus { right: 0; justify-content: flex-end; padding-right: 15px; }
+
+        .touch-zone:active {
+            opacity: 0.5;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .life-total {
+            font-size: clamp(3.5rem, 18vmin, 7.5rem);
+            font-weight: 800;
+            line-height: 1;
+            z-index: 2;
+            pointer-events: none;
+            letter-spacing: -2px;
+            margin-top: 15px;
+        }
+
+        .player-label {
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            opacity: 0.6;
+            z-index: 2;
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cmd-btn {
+            position: absolute;
+            top: 15px;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            padding: 7px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        @media (orientation: landscape) {
+            .cmd-btn {
+                top: 10px;
+                padding: 4px 12px;
+                font-size: 0.75rem;
+                border-radius: 8px;
+            }
+        }
+
+        .cmd-fullscreen-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 10, 12, 0.96);
+            backdrop-filter: blur(12px);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .cmd-modal-content {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cmd-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .cmd-overlay-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cmd-close-btn-top {
+            background: #d3202a;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .cmd-close-btn-top:active {
+            transform: scale(0.95);
+        }
+
+        .cmd-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 18px;
+            border-radius: 12px;
+        }
+
+        .cmd-player-tag {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .cmd-color-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            display: inline-block;
+        }
+
+        .cmd-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cmd-btn-small {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #555;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.1s, transform 0.1s;
+        }
+
+        .cmd-btn-small:active {
+            background: #444;
+            transform: scale(0.92);
+        }
+
+        .cmd-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .cmd-value.danger {
+            color: #ff4d4d;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 0. ÚVODNÍ ANIMACE (SPLASH SCREEN) -->
+    <div id="splash-screen" onclick="skipSplash()">
+        <div class="wave-text">
+            <span>A</span>
+            <span>d</span>
+            <span>a</span>
+            <span>m</span>
+            <span>o</span>
+            <span>v</span>
+            <span>o</span>
+        </div>
+        <div class="card-fan">
+            <div class="card card-1"></div>
+            <div class="card card-2"></div>
+            <div class="card card-3"></div>
+        </div>
+    </div>
+
+    <!-- 1. VÝBĚR JAZYKA -->
+    <div id="screen-lang" class="screen active">
+        <h1>Select Language / Výběr jazyka</h1>
+        <div class="btn-group">
+            <button class="menu-btn" onclick="selectLang('cs')">Čeština 🇨🇿</button>
+            <button class="menu-btn" onclick="selectLang('en')">English 🇬🇧</button>
+        </div>
+    </div>
+
+    <!-- 2. VÝBĚR POČÁTEČNÍCH ŽIVOTŮ -->
+    <div id="screen-starting-life" class="screen">
+        <h1 id="txt-select-life">Počáteční životy</h1>
+        <div class="btn-group">
+            <button class="menu-btn" onclick="selectStartingLife(20)">20</button>
+            <button class="menu-btn" onclick="selectStartingLife(40)">40</button>
+        </div>
+    </div>
+
+    <!-- 3. VÝBĚR POČTU HRÁČŮ -->
+    <div id="screen-players" class="screen">
+        <h1 id="txt-select-players">Počet hráčů</h1>
+        <div class="btn-group">
+            <button class="menu-btn" onclick="selectPlayerCount(2)">2</button>
+            <button class="menu-btn" onclick="selectPlayerCount(3)">3</button>
+            <button class="menu-btn" onclick="selectPlayerCount(4)">4</button>
+        </div>
+    </div>
+
+    <!-- 4. VÝBĚR BAREV HRÁČŮ -->
+    <div id="screen-colors" class="screen">
+        <h1 id="txt-select-colors">Výběr barev</h1>
+        <h2 id="txt-current-player-setup">Hráč 1</h2>
+        <div class="color-grid" id="color-options"></div>
+        <div style="margin-top: 30px;">
+            <button class="menu-btn" id="btn-next-player" onclick="confirmColor()">Další</button>
+        </div>
+    </div>
+
+    <!-- 5. HERNÍ OBRAZOVKA -->
+    <div id="game-screen" class="screen">
+        <!-- PLOVOUCÍ DROPDOWN MENU -->
+        <div class="menu-container">
+            <button class="dots-btn" onclick="toggleMenu(event)">⋮</button>
+            <div class="dropdown-menu" id="dropdown-menu">
+                <button class="dropdown-item" id="btn-reset" onclick="resetGame()">↺ Reset</button>
+                <button class="dropdown-item" id="btn-menu" onclick="exitToMenu()">⚙️ Menu</button>
+            </div>
+        </div>
+        <div id="grid"></div>
+        <!-- MÍSTO PRO CELOOBRAZOVKOVÝ MODAL -->
+        <div id="cmd-modal-container"></div>
+    </div>
+
+    <script>
+        let splashTimeout;
+        let wakeLock = null;
+
+        /* --- SCREEN WAKE LOCK LOGIKA --- */
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                } catch (err) {
+                    console.warn(`Wake Lock Error: ${err.name}, ${err.message}`);
+                }
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock !== null) {
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                });
+            }
+        }
+
+        document.addEventListener('visibilitychange', async () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                await requestWakeLock();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            splashTimeout = setTimeout(() => {
+                hideSplash();
+            }, 2800);
+        });
+
+        function hideSplash() {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.add('fade-out');
+            }
+        }
+
+        function skipSplash() {
+            clearTimeout(splashTimeout);
+            hideSplash();
+        }
+
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('.menu-container')) {
+                const menu = document.getElementById('dropdown-menu');
+                if (menu) menu.classList.remove('show');
+            }
+        });
+
+        function toggleMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('dropdown-menu');
+            menu.classList.toggle('show');
+        }
+
+        const translations = {
+            cs: {
+                selectLife: "Počáteční počet životů",
+                selectPlayers: "Zvolte počet hráčů",
+                selectColors: "Výběr barvy many",
+                player: "Hráč",
+                next: "Pokračovat",
+                start: "Spustit hru",
+                reset: "Reset",
+                menu: "Menu",
+                cmdTitle: "CMD Damage pro"
+            },
+            en: {
+                selectLife: "Starting Life Total",
+                selectPlayers: "Select Number of Players",
+                selectColors: "Select Mana Color",
+                player: "Player",
+                next: "Next",
+                start: "Start Game",
+                reset: "Reset",
+                menu: "Menu",
+                cmdTitle: "CMD Damage to"
+            }
+        };
+
+        const manaColors = [
+            { id: 'bg-white', hex: '#f8f6d8' },
+            { id: 'bg-blue',  hex: '#0e68ab' },
+            { id: 'bg-black', hex: '#211e1f' },
+            { id: 'bg-red',   hex: '#d3202a' },
+            { id: 'bg-green', hex: '#00733e' }
+        ];
+
+        let currentLang = 'cs';
+        let startingLife = 40;
+        let playerCount = 4;
+        let setupPlayerIndex = 0;
+        let selectedColors = [];
+        let playersData = [];
+        let activeCmdOverlay = null;
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function selectLang(lang) {
+            currentLang = lang;
+            document.getElementById('txt-select-life').innerText = translations[lang].selectLife;
+            document.getElementById('txt-select-players').innerText = translations[lang].selectPlayers;
+            document.getElementById('txt-select-colors').innerText = translations[lang].selectColors;
+            document.getElementById('btn-menu').innerText = `⚙️ ${translations[lang].menu}`;
+            showScreen('screen-starting-life');
+        }
+
+        function selectStartingLife(life) {
+            startingLife = life;
+            document.getElementById('btn-reset').innerText = `↺ ${translations[currentLang].reset} (${startingLife})`;
+            showScreen('screen-players');
+        }
+
+        function selectPlayerCount(count) {
+            playerCount = count;
+            setupPlayerIndex = 0;
+            selectedColors = [];
+            startColorSetup();
+        }
+
+        function startColorSetup() {
+            showScreen('screen-colors');
+            updateColorSetupUI();
+        }
+
+        function updateColorSetupUI() {
+            const t = translations[currentLang];
+            document.getElementById('txt-current-player-setup').innerText = `${t.player} ${setupPlayerIndex + 1}`;
+            
+            const btnNext = document.getElementById('btn-next-player');
+            btnNext.innerText = (setupPlayerIndex === playerCount - 1) ? t.start : t.next;
+
+            const grid = document.getElementById('color-options');
+            grid.innerHTML = '';
+
+            if (!selectedColors[setupPlayerIndex]) {
+                selectedColors[setupPlayerIndex] = manaColors[setupPlayerIndex % manaColors.length].id;
+            }
+
+            manaColors.forEach(c => {
+                const circle = document.createElement('div');
+                circle.className = `color-btn ${c.id}`;
+                if (selectedColors[setupPlayerIndex] === c.id) {
+                    circle.classList.add('selected');
+                }
+                circle.onclick = () => {
+                    selectedColors[setupPlayerIndex] = c.id;
+                    updateColorSetupUI();
+                };
+                grid.appendChild(circle);
+            });
+        }
+
+        function confirmColor() {
+            if (setupPlayerIndex < playerCount - 1) {
+                setupPlayerIndex++;
+                updateColorSetupUI();
+            } else {
+                launchGame();
+            }
+        }
+
+        async function launchGame() {
+            initPlayersData();
+
+            try {
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen();
+                }
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (e) {}
+
+            await requestWakeLock();
+
+            renderGame();
+            showScreen('game-screen');
+        }
+
+        function initPlayersData() {
+            playersData = [];
+            for (let i = 0; i < playerCount; i++) {
+                let cmdDmgMap = {};
+                for (let j = 0; j < playerCount; j++) {
+                    if (i !== j) cmdDmgMap[j] = 0;
+                }
+                playersData.push({
+                    id: i,
+                    life: startingLife,
+                    colorClass: selectedColors[i],
+                    cmdDamage: cmdDmgMap
+                });
+            }
+        }
+
+        function exitToMenu() {
+            document.getElementById('dropdown-menu').classList.remove('show');
+            if (document.exitFullscreen && document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
+            
+            releaseWakeLock();
+
+            showScreen('screen-lang');
+        }
+
+        function resetGame() {
+            document.getElementById('dropdown-menu').classList.remove('show');
+            initPlayersData();
+            activeCmdOverlay = null;
+            renderGame();
+        }
+
+        function changeLife(index, amount) {
+            playersData[index].life += amount;
+            renderGame();
+        }
+
+        function toggleCmdOverlay(index) {
+            if (activeCmdOverlay === index) {
+                activeCmdOverlay = null;
+            } else {
+                activeCmdOverlay = index;
+            }
+            renderGame();
+        }
+
+        function changeCmdDamage(victimIndex, attackerIndex, amount) {
+            const currentDmg = playersData[victimIndex].cmdDamage[attackerIndex] || 0;
+            if (currentDmg + amount < 0) return;
+
+            playersData[victimIndex].cmdDamage[attackerIndex] = currentDmg + amount;
+            playersData[victimIndex].life -= amount;
+            
+            renderGame();
+        }
+
+        /* --- DRAG & DROP LOGIKA --- */
+        let draggedIndex = null;
+        let dragTimer = null;
+        let isDragging = false;
+
+        function handlePointerDown(e, index) {
+            if (e.target.closest('.cmd-btn')) return;
+
+            draggedIndex = index;
+            const targetCard = e.currentTarget;
+
+            dragTimer = setTimeout(() => {
+                isDragging = true;
+                targetCard.classList.add('dragging');
+                if (navigator.vibrate) navigator.vibrate(50);
+            }, 400);
+        }
+
+        function handlePointerMove(e) {
+            if (!isDragging || draggedIndex === null) return;
+
+            const elementUnder = document.elementFromPoint(e.clientX, e.clientY);
+            if (!elementUnder) return;
+
+            const targetCard = elementUnder.closest('.player-card');
+
+            document.querySelectorAll('.player-card').forEach(card => card.classList.remove('drag-over'));
+
+            if (targetCard && parseInt(targetCard.dataset.index) !== draggedIndex) {
+                targetCard.classList.add('drag-over');
+            }
+        }
+
+        function handlePointerUp(e) {
+            clearTimeout(dragTimer);
+
+            if (isDragging && draggedIndex !== null) {
+                const elementUnder = document.elementFromPoint(e.clientX, e.clientY);
+                if (elementUnder) {
+                    const targetCard = elementUnder.closest('.player-card');
+                    if (targetCard) {
+                        const targetIndex = parseInt(targetCard.dataset.index);
+                        if (!isNaN(targetIndex) && targetIndex !== draggedIndex) {
+                            const temp = playersData[draggedIndex];
+                            playersData[draggedIndex] = playersData[targetIndex];
+                            playersData[targetIndex] = temp;
+                        }
+                    }
+                }
+            }
+
+            isDragging = false;
+            draggedIndex = null;
+            document.querySelectorAll('.player-card').forEach(card => {
+                card.classList.remove('dragging', 'drag-over');
+            });
+        }
+
+        function renderGame() {
             const grid = document.getElementById('grid');
             grid.className = `players-${playerCount}`;
             grid.innerHTML = '';
@@ -20,12 +894,6 @@ function renderGame() {
                 }
 
                 card.onpointerdown = (e) => handlePointerDown(e, index);
-
-                // Změna: Pro otočené i neotočené karty udržujeme fyzické pořadí (-) vlevo a (+) vpravo z pohledu daného hráče.
-                // Protože CSS transform: rotate(180deg) otočí prvek i s jeho dětskými prvky, 
-                // levá zóna u otočené karty fyzicky ubírá životy (-), čímž pro sedícího hráče představuje jeho levou stranu.
-                const leftZoneClick = () => changeLife(index, -1);
-                const rightZoneClick = () => changeLife(index, 1);
 
                 card.innerHTML = `
                     <div class="player-label">P${player.id + 1}</div>
@@ -91,3 +959,6 @@ function renderGame() {
                 modalContainer.appendChild(modal);
             }
         }
+    </script>
+</body>
+</html>
