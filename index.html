@@ -1,0 +1,93 @@
+function renderGame() {
+            const grid = document.getElementById('grid');
+            grid.className = `players-${playerCount}`;
+            grid.innerHTML = '';
+
+            grid.onpointermove = handlePointerMove;
+            grid.onpointerup = handlePointerUp;
+            grid.onpointercancel = handlePointerUp;
+
+            playersData.forEach((player, index) => {
+                const card = document.createElement('div');
+                card.className = `player-card ${player.colorClass}`;
+                card.dataset.index = index;
+
+                const isRotated = (playerCount === 2 && index === 0) || 
+                                  (playerCount >= 3 && (index === 0 || index === 1));
+
+                if (isRotated) {
+                    card.classList.add('rotate-180');
+                }
+
+                card.onpointerdown = (e) => handlePointerDown(e, index);
+
+                // Změna: Pro otočené i neotočené karty udržujeme fyzické pořadí (-) vlevo a (+) vpravo z pohledu daného hráče.
+                // Protože CSS transform: rotate(180deg) otočí prvek i s jeho dětskými prvky, 
+                // levá zóna u otočené karty fyzicky ubírá životy (-), čímž pro sedícího hráče představuje jeho levou stranu.
+                const leftZoneClick = () => changeLife(index, -1);
+                const rightZoneClick = () => changeLife(index, 1);
+
+                card.innerHTML = `
+                    <div class="player-label">P${player.id + 1}</div>
+                    <button class="cmd-btn" onclick="toggleCmdOverlay(${index})">⚔️ CMD</button>
+                    <div class="touch-zone touch-minus" onclick="changeLife(${index}, -1)">−</div>
+                    <div class="life-total">${player.life}</div>
+                    <div class="touch-zone touch-plus" onclick="changeLife(${index}, 1)">+</div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            // MODAL OVERLAY
+            const modalContainer = document.getElementById('cmd-modal-container');
+            modalContainer.innerHTML = '';
+
+            if (activeCmdOverlay !== null) {
+                const victimIndex = activeCmdOverlay;
+                const player = playersData[victimIndex];
+                const isRotated = (playerCount === 2 && victimIndex === 0) || 
+                                  (playerCount >= 3 && (victimIndex === 0 || victimIndex === 1));
+
+                const modal = document.createElement('div');
+                modal.className = 'cmd-fullscreen-modal';
+                
+                modal.onclick = (e) => {
+                    if (e.target === modal) toggleCmdOverlay(null);
+                };
+
+                let contentHtml = `
+                    <div class="cmd-modal-content ${isRotated ? 'rotate-180' : ''}">
+                        <div class="cmd-header">
+                            <span class="cmd-overlay-title">${translations[currentLang].cmdTitle} P${player.id + 1}</span>
+                            <button class="cmd-close-btn-top" onclick="toggleCmdOverlay(null)">OK</button>
+                        </div>
+                `;
+
+                Object.keys(player.cmdDamage).forEach(attackerIdx => {
+                    const dmgVal = player.cmdDamage[attackerIdx];
+                    const attackerPlayer = playersData.find(p => p.id === parseInt(attackerIdx)) || { colorClass: '', id: attackerIdx };
+                    const isDeadly = dmgVal >= 21;
+
+                    contentHtml += `
+                        <div class="cmd-row">
+                            <div class="cmd-player-tag">
+                                <div class="cmd-color-dot ${attackerPlayer.colorClass}"></div>
+                                <span>P${parseInt(attackerIdx) + 1}</span>
+                            </div>
+                            <div class="cmd-controls">
+                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerIdx}, -1)">-</button>
+                                <span class="cmd-value ${isDeadly ? 'danger' : ''}">${dmgVal}${isDeadly ? ' 💀' : ''}</span>
+                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerIdx}, 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                contentHtml += `
+                    </div>
+                `;
+
+                modal.innerHTML = contentHtml;
+                modalContainer.appendChild(modal);
+            }
+        }
