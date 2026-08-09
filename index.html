@@ -331,6 +331,33 @@
             margin-top: 15px;
         }
 
+        /* PLOVOUCÍ UKAZATEL ZMĚNY HP */
+        .life-change-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -110%);
+            font-size: clamp(1.8rem, 8vmin, 3.2rem);
+            font-weight: 900;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.45);
+            padding: 4px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .life-change-badge.show {
+            opacity: 1;
+            transform: translate(-50%, -130%);
+        }
+
+        .life-change-badge.plus { color: #4eff81; }
+        .life-change-badge.minus { color: #ff5252; }
+
         .player-label {
             position: absolute;
             top: 10px;
@@ -764,7 +791,9 @@
                     id: i,
                     life: startingLife,
                     colorClass: selectedColors[i],
-                    cmdDamage: cmdDmgMap
+                    cmdDamage: cmdDmgMap,
+                    currentDelta: 0,
+                    deltaTimer: null
                 });
             }
         }
@@ -791,8 +820,32 @@
         }
 
         function changeLife(index, amount) {
-            playersData[index].life += amount;
-            renderGame();
+            const player = playersData[index];
+            player.life += amount;
+            player.currentDelta += amount;
+
+            // Aktualizace hlavního čísla životů bez překreslení celého gridu (pro plynulost)
+            const lifeEl = document.getElementById(`life-val-${index}`);
+            if (lifeEl) lifeEl.innerText = player.life;
+
+            // Zobrazení a animace plovoucího badge změny
+            const badgeEl = document.getElementById(`life-badge-${index}`);
+            if (badgeEl) {
+                clearTimeout(player.deltaTimer);
+
+                const prefix = player.currentDelta > 0 ? '+' : '';
+                badgeEl.innerText = `${prefix}${player.currentDelta}`;
+                
+                badgeEl.className = 'life-change-badge show ' + (player.currentDelta > 0 ? 'plus' : 'minus');
+
+                // Časovač pro plynulé zmizení po 1,2s neaktivity
+                player.deltaTimer = setTimeout(() => {
+                    badgeEl.classList.remove('show');
+                    setTimeout(() => {
+                        player.currentDelta = 0;
+                    }, 200);
+                }, 1200);
+            }
         }
 
         function toggleCmdOverlay(index) {
@@ -899,7 +952,8 @@
                     <div class="player-label">P${player.id + 1}</div>
                     <button class="cmd-btn" onclick="toggleCmdOverlay(${index})">⚔️ CMD</button>
                     <div class="touch-zone touch-minus" onclick="changeLife(${index}, -1)">−</div>
-                    <div class="life-total">${player.life}</div>
+                    <div class="life-total" id="life-val-${index}">${player.life}</div>
+                    <div class="life-change-badge" id="life-badge-${index}"></div>
                     <div class="touch-zone touch-plus" onclick="changeLife(${index}, 1)">+</div>
                 `;
 
