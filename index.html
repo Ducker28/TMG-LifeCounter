@@ -124,12 +124,13 @@
             width: 100vw;
             padding: 20px;
             text-align: center;
+            overflow-y: auto;
         }
 
         .screen.active { display: flex; }
 
         h1 { font-size: 1.8rem; margin-bottom: 25px; color: #e0e0e0; }
-        h2 { font-size: 1.4rem; margin-bottom: 15px; color: #aaa; }
+        h2 { font-size: 1.1rem; margin-bottom: 10px; color: #aaa; }
 
         .btn-group {
             display: flex;
@@ -162,7 +163,7 @@
             gap: 10px;
             width: 100%;
             max-width: 320px;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .color-btn {
@@ -184,6 +185,117 @@
         .bg-red   { background-color: #d3202a; color: #fff; }
         .bg-green { background-color: #00733e; color: #fff; }
 
+        /* PRVKY NASTAVENÍ ROZVRŽENÍ STOLU */
+        .preview-container {
+            width: 260px;
+            height: 180px;
+            border: 2px dashed #444;
+            border-radius: 16px;
+            padding: 6px;
+            background: #08080a;
+            margin-bottom: 10px;
+            touch-action: none;
+        }
+
+        .table-preview {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            gap: 4px;
+        }
+
+        /* Varianty rozložení */
+        .table-preview.players-2 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr; }
+        .table-preview.players-4 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+        
+        .table-preview.players-3-bottom-span { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+        .table-preview.players-3-bottom-span .slot:nth-child(3) { grid-column: span 2; }
+        
+        .table-preview.players-3-top-span { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+        .table-preview.players-3-top-span .slot:nth-child(1) { grid-column: span 2; }
+        
+        .table-preview.players-3-cols { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr 1fr; }
+
+        .slot {
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            transition: transform 0.15s ease, border-color 0.2s;
+        }
+
+        .slot.active-slot {
+            border-color: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+            z-index: 2;
+        }
+
+        .slot.dragging {
+            opacity: 0.6;
+            transform: scale(0.9);
+        }
+
+        .slot.drag-over {
+            border-color: #4eff81;
+            box-shadow: inset 0 0 0 3px #4eff81;
+        }
+
+        .slot-rotate {
+            display: inline-block;
+            transform: rotate(180deg);
+        }
+
+        .layout-options {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .opt-btn {
+            background: #222;
+            color: #aaa;
+            border: 1px solid #444;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .opt-btn.active {
+            background: #444;
+            color: #fff;
+            border-color: #888;
+            font-weight: bold;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .sub-btn {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .sub-btn:active {
+            background: #555;
+        }
+
         /* HERNÍ OBRAZOVKA */
         #game-screen {
             position: relative;
@@ -191,6 +303,7 @@
             width: 100vw;
             padding: 0;
             touch-action: none;
+            overflow: hidden;
         }
 
         /* PLOVOUCÍ DROPDOWN MENU */
@@ -263,15 +376,15 @@
         }
 
         .players-2 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr; }
-        .players-3 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
-        .players-3 .player-card:nth-child(3) { grid-column: span 2; }
+        .players-3-bottom-span { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+        .players-3-bottom-span .player-card:nth-child(3) { grid-column: span 2; }
+        .players-3-top-span { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
+        .players-3-top-span .player-card:nth-child(1) { grid-column: span 2; }
+        .players-3-cols { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr 1fr; }
         .players-4 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
 
         @media (orientation: landscape) {
             .players-2 { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr; }
-            .players-3 { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr 1fr; }
-            .players-3 .player-card:nth-child(3) { grid-column: span 1; }
-            .players-4 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
         }
 
         .player-card {
@@ -331,7 +444,6 @@
             margin-top: 15px;
         }
 
-        /* PLOVOUCÍ UKAZATEL ZMĚNY HP */
         .life-change-badge {
             position: absolute;
             top: 50%;
@@ -567,13 +679,28 @@
         </div>
     </div>
 
-    <!-- 4. VÝBĚR BAREV HRÁČŮ -->
+    <!-- 4. NASTAVENÍ STOLU & BAREV -->
     <div id="screen-colors" class="screen">
-        <h1 id="txt-select-colors">Výběr barev</h1>
-        <h2 id="txt-current-player-setup">Hráč 1</h2>
+        <h1 id="txt-select-colors">Rozvržení a Barvy</h1>
+        
+        <!-- Přepínač rozvržení (pro 3 hráče) -->
+        <div id="layout-selector-container" class="layout-options" style="display: none;"></div>
+
+        <!-- Náhled mřížky stolu s Drag & Drop -->
+        <div class="preview-container">
+            <div id="table-preview" class="table-preview"></div>
+        </div>
+
+        <div class="controls-row">
+            <h2 id="txt-selected-slot-info" style="margin:0;">Vybráno: P1</h2>
+            <button class="sub-btn" id="btn-toggle-rotate" onclick="toggleCurrentSlotRotation()">🔄 Rotovat (180°)</button>
+        </div>
+        
+        <!-- Výběr barvy pro vybraný slot -->
         <div class="color-grid" id="color-options"></div>
-        <div style="margin-top: 30px;">
-            <button class="menu-btn" id="btn-next-player" onclick="confirmColor()">Další</button>
+
+        <div style="margin-top: 20px;">
+            <button class="menu-btn" id="btn-start-game" onclick="launchGame()">Spustit hru</button>
         </div>
     </div>
 
@@ -588,7 +715,6 @@
             </div>
         </div>
         <div id="grid"></div>
-        <!-- MÍSTO PRO CELOOBRAZOVKOVÝ MODAL -->
         <div id="cmd-modal-container"></div>
     </div>
 
@@ -596,7 +722,6 @@
         let splashTimeout;
         let wakeLock = null;
 
-        /* --- SCREEN WAKE LOCK LOGIKA --- */
         async function requestWakeLock() {
             if ('wakeLock' in navigator) {
                 try {
@@ -629,9 +754,7 @@
 
         function hideSplash() {
             const splash = document.getElementById('splash-screen');
-            if (splash) {
-                splash.classList.add('fade-out');
-            }
+            if (splash) splash.classList.add('fade-out');
         }
 
         function skipSplash() {
@@ -652,28 +775,35 @@
             menu.classList.toggle('show');
         }
 
+        /* LOCALIZATION STRINGS */
         const translations = {
             cs: {
                 selectLife: "Počáteční počet životů",
                 selectPlayers: "Zvolte počet hráčů",
-                selectColors: "Výběr barvy many",
-                player: "Hráč",
-                next: "Pokračovat",
+                selectColors: "Rozvržení stolu & Barvy",
                 start: "Spustit hru",
                 reset: "Reset",
                 menu: "Menu",
-                cmdTitle: "CMD Damage pro"
+                cmdTitle: "CMD Damage pro",
+                selectedSlot: "Vybrán",
+                rotateBtn: "🔄 Otočit (180°)",
+                layout1Bot2Top: "1 Dole / 2 Nahoře",
+                layout1Top2Bot: "1 Nahoře / 2 Dole",
+                layout3Cols: "3 Vedle sebe"
             },
             en: {
                 selectLife: "Starting Life Total",
                 selectPlayers: "Select Number of Players",
-                selectColors: "Select Mana Color",
-                player: "Player",
-                next: "Next",
+                selectColors: "Table Layout & Colors",
                 start: "Start Game",
                 reset: "Reset",
                 menu: "Menu",
-                cmdTitle: "CMD Damage to"
+                cmdTitle: "CMD Damage to",
+                selectedSlot: "Selected",
+                rotateBtn: "🔄 Rotate (180°)",
+                layout1Bot2Top: "1 Bottom / 2 Top",
+                layout1Top2Bot: "1 Top / 2 Bottom",
+                layout3Cols: "3 Side-by-side"
             }
         };
 
@@ -688,10 +818,13 @@
         let currentLang = 'cs';
         let startingLife = 40;
         let playerCount = 4;
-        let setupPlayerIndex = 0;
-        let selectedColors = [];
         let playersData = [];
         let activeCmdOverlay = null;
+
+        /* SETUP CONFIGURATION STATE */
+        let activeSlotIndex = 0;
+        let currentLayoutClass = 'players-4';
+        let setupSlots = []; // Array of objects { id, colorClass, rotated }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -703,7 +836,9 @@
             document.getElementById('txt-select-life').innerText = translations[lang].selectLife;
             document.getElementById('txt-select-players').innerText = translations[lang].selectPlayers;
             document.getElementById('txt-select-colors').innerText = translations[lang].selectColors;
+            document.getElementById('btn-start-game').innerText = translations[lang].start;
             document.getElementById('btn-menu').innerText = `⚙️ ${translations[lang].menu}`;
+            document.getElementById('btn-toggle-rotate').innerText = translations[lang].rotateBtn;
             showScreen('screen-starting-life');
         }
 
@@ -715,51 +850,154 @@
 
         function selectPlayerCount(count) {
             playerCount = count;
-            setupPlayerIndex = 0;
-            selectedColors = [];
+            activeSlotIndex = 0;
+            setupSlots = [];
+
+            if (playerCount === 2) currentLayoutClass = 'players-2';
+            else if (playerCount === 3) currentLayoutClass = 'players-3-bottom-span';
+            else currentLayoutClass = 'players-4';
+
+            for (let i = 0; i < playerCount; i++) {
+                const isRotatedDefault = (playerCount === 2 && i === 0) || (playerCount >= 3 && (i === 0 || i === 1));
+                setupSlots.push({
+                    id: i,
+                    colorClass: manaColors[i % manaColors.length].id,
+                    rotated: isRotatedDefault
+                });
+            }
+
             startColorSetup();
         }
 
         function startColorSetup() {
             showScreen('screen-colors');
-            updateColorSetupUI();
+            renderLayoutOptions();
+            updateSetupUI();
         }
 
-        function updateColorSetupUI() {
-            const t = translations[currentLang];
-            document.getElementById('txt-current-player-setup').innerText = `${t.player} ${setupPlayerIndex + 1}`;
-            
-            const btnNext = document.getElementById('btn-next-player');
-            btnNext.innerText = (setupPlayerIndex === playerCount - 1) ? t.start : t.next;
+        function renderLayoutOptions() {
+            const container = document.getElementById('layout-selector-container');
+            container.innerHTML = '';
 
+            if (playerCount === 3) {
+                container.style.display = 'flex';
+                const t = translations[currentLang];
+                const layouts = [
+                    { id: 'players-3-bottom-span', label: t.layout1Bot2Top },
+                    { id: 'players-3-top-span', label: t.layout1Top2Bot },
+                    { id: 'players-3-cols', label: t.layout3Cols }
+                ];
+
+                layouts.forEach(l => {
+                    const btn = document.createElement('button');
+                    btn.className = `opt-btn ${currentLayoutClass === l.id ? 'active' : ''}`;
+                    btn.innerText = l.label;
+                    btn.onclick = () => {
+                        currentLayoutClass = l.id;
+                        renderLayoutOptions();
+                        updateSetupUI();
+                    };
+                    container.appendChild(btn);
+                });
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function toggleCurrentSlotRotation() {
+            if (setupSlots[activeSlotIndex]) {
+                setupSlots[activeSlotIndex].rotated = !setupSlots[activeSlotIndex].rotated;
+                updateSetupUI();
+            }
+        }
+
+        /* DRAG & DROP PRO PREVIEW SETUP */
+        let setupDraggedIndex = null;
+
+        function updateSetupUI() {
+            const t = translations[currentLang];
+            const currentSlotData = setupSlots[activeSlotIndex] || setupSlots[0];
+            document.getElementById('txt-selected-slot-info').innerText = `${t.selectedSlot}: P${currentSlotData.id + 1}`;
+
+            const preview = document.getElementById('table-preview');
+            preview.className = `table-preview ${currentLayoutClass}`;
+            preview.innerHTML = '';
+
+            preview.onpointermove = handleSetupPointerMove;
+            preview.onpointerup = handleSetupPointerUp;
+            preview.onpointercancel = handleSetupPointerUp;
+
+            setupSlots.forEach((slotData, index) => {
+                const slot = document.createElement('div');
+                slot.className = `slot ${slotData.colorClass} ${activeSlotIndex === index ? 'active-slot' : ''}`;
+                slot.dataset.setupIndex = index;
+
+                const label = document.createElement('span');
+                if (slotData.rotated) label.className = 'slot-rotate';
+                label.innerText = `P${slotData.id + 1}`;
+                
+                slot.appendChild(label);
+
+                slot.onpointerdown = (e) => {
+                    activeSlotIndex = index;
+                    setupDraggedIndex = index;
+                    slot.classList.add('dragging');
+                    updateSetupUI();
+                };
+
+                preview.appendChild(slot);
+            });
+
+            // Vykreslení výběru barev
             const grid = document.getElementById('color-options');
             grid.innerHTML = '';
-
-            if (!selectedColors[setupPlayerIndex]) {
-                selectedColors[setupPlayerIndex] = manaColors[setupPlayerIndex % manaColors.length].id;
-            }
 
             manaColors.forEach(c => {
                 const circle = document.createElement('div');
                 circle.className = `color-btn ${c.id}`;
-                if (selectedColors[setupPlayerIndex] === c.id) {
+                if (setupSlots[activeSlotIndex].colorClass === c.id) {
                     circle.classList.add('selected');
                 }
                 circle.onclick = () => {
-                    selectedColors[setupPlayerIndex] = c.id;
-                    updateColorSetupUI();
+                    setupSlots[activeSlotIndex].colorClass = c.id;
+                    updateSetupUI();
                 };
                 grid.appendChild(circle);
             });
         }
 
-        function confirmColor() {
-            if (setupPlayerIndex < playerCount - 1) {
-                setupPlayerIndex++;
-                updateColorSetupUI();
-            } else {
-                launchGame();
+        function handleSetupPointerMove(e) {
+            if (setupDraggedIndex === null) return;
+            const elementUnder = document.elementFromPoint(e.clientX, e.clientY);
+            if (!elementUnder) return;
+
+            const targetSlot = elementUnder.closest('.slot');
+            document.querySelectorAll('.slot').forEach(s => s.classList.remove('drag-over'));
+
+            if (targetSlot && parseInt(targetSlot.dataset.setupIndex) !== setupDraggedIndex) {
+                targetSlot.classList.add('drag-over');
             }
+        }
+
+        function handleSetupPointerUp(e) {
+            if (setupDraggedIndex !== null) {
+                const elementUnder = document.elementFromPoint(e.clientX, e.clientY);
+                if (elementUnder) {
+                    const targetSlot = elementUnder.closest('.slot');
+                    if (targetSlot) {
+                        const targetIndex = parseInt(targetSlot.dataset.setupIndex);
+                        if (!isNaN(targetIndex) && targetIndex !== setupDraggedIndex) {
+                            const temp = setupSlots[setupDraggedIndex];
+                            setupSlots[setupDraggedIndex] = setupSlots[targetIndex];
+                            setupSlots[targetIndex] = temp;
+                            activeSlotIndex = targetIndex;
+                        }
+                    }
+                }
+            }
+            setupDraggedIndex = null;
+            document.querySelectorAll('.slot').forEach(s => s.classList.remove('dragging', 'drag-over'));
+            updateSetupUI();
         }
 
         async function launchGame() {
@@ -782,20 +1020,22 @@
 
         function initPlayersData() {
             playersData = [];
-            for (let i = 0; i < playerCount; i++) {
+            setupSlots.forEach((slot, i) => {
                 let cmdDmgMap = {};
-                for (let j = 0; j < playerCount; j++) {
-                    if (i !== j) cmdDmgMap[j] = 0;
-                }
+                setupSlots.forEach((otherSlot, j) => {
+                    if (i !== j) cmdDmgMap[otherSlot.id] = 0;
+                });
+
                 playersData.push({
-                    id: i,
+                    id: slot.id,
                     life: startingLife,
-                    colorClass: selectedColors[i],
+                    colorClass: slot.colorClass,
+                    rotated: slot.rotated,
                     cmdDamage: cmdDmgMap,
                     currentDelta: 0,
                     deltaTimer: null
                 });
-            }
+            });
         }
 
         function exitToMenu() {
@@ -806,9 +1046,7 @@
             if (screen.orientation && screen.orientation.unlock) {
                 screen.orientation.unlock();
             }
-            
             releaseWakeLock();
-
             showScreen('screen-lang');
         }
 
@@ -824,50 +1062,40 @@
             player.life += amount;
             player.currentDelta += amount;
 
-            // Aktualizace hlavního čísla životů bez překreslení celého gridu (pro plynulost)
             const lifeEl = document.getElementById(`life-val-${index}`);
             if (lifeEl) lifeEl.innerText = player.life;
 
-            // Zobrazení a animace plovoucího badge změny
             const badgeEl = document.getElementById(`life-badge-${index}`);
             if (badgeEl) {
                 clearTimeout(player.deltaTimer);
 
                 const prefix = player.currentDelta > 0 ? '+' : '';
                 badgeEl.innerText = `${prefix}${player.currentDelta}`;
-                
                 badgeEl.className = 'life-change-badge show ' + (player.currentDelta > 0 ? 'plus' : 'minus');
 
-                // Časovač pro plynulé zmizení po 1,2s neaktivity
                 player.deltaTimer = setTimeout(() => {
                     badgeEl.classList.remove('show');
-                    setTimeout(() => {
-                        player.currentDelta = 0;
-                    }, 200);
+                    setTimeout(() => { player.currentDelta = 0; }, 200);
                 }, 1200);
             }
         }
 
         function toggleCmdOverlay(index) {
-            if (activeCmdOverlay === index) {
-                activeCmdOverlay = null;
-            } else {
-                activeCmdOverlay = index;
-            }
+            if (startingLife === 20) return;
+            activeCmdOverlay = activeCmdOverlay === index ? null : index;
             renderGame();
         }
 
-        function changeCmdDamage(victimIndex, attackerIndex, amount) {
-            const currentDmg = playersData[victimIndex].cmdDamage[attackerIndex] || 0;
+        function changeCmdDamage(victimIndex, attackerId, amount) {
+            const currentDmg = playersData[victimIndex].cmdDamage[attackerId] || 0;
             if (currentDmg + amount < 0) return;
 
-            playersData[victimIndex].cmdDamage[attackerIndex] = currentDmg + amount;
+            playersData[victimIndex].cmdDamage[attackerId] = currentDmg + amount;
             playersData[victimIndex].life -= amount;
-            
             renderGame();
         }
 
-        /* --- DRAG & DROP LOGIKA --- */
+        /* IN-GAME DRAG & DROP LOGIKA */
         let draggedIndex = null;
         let dragTimer = null;
         let isDragging = false;
@@ -887,12 +1115,10 @@
 
         function handlePointerMove(e) {
             if (!isDragging || draggedIndex === null) return;
-
             const elementUnder = document.elementFromPoint(e.clientX, e.clientY);
             if (!elementUnder) return;
 
             const targetCard = elementUnder.closest('.player-card');
-
             document.querySelectorAll('.player-card').forEach(card => card.classList.remove('drag-over'));
 
             if (targetCard && parseInt(targetCard.dataset.index) !== draggedIndex) {
@@ -927,7 +1153,7 @@
 
         function renderGame() {
             const grid = document.getElementById('grid');
-            grid.className = `players-${playerCount}`;
+            grid.className = currentLayoutClass;
             grid.innerHTML = '';
 
             grid.onpointermove = handlePointerMove;
@@ -939,18 +1165,19 @@
                 card.className = `player-card ${player.colorClass}`;
                 card.dataset.index = index;
 
-                const isRotated = (playerCount === 2 && index === 0) || 
-                                  (playerCount >= 3 && (index === 0 || index === 1));
-
-                if (isRotated) {
+                if (player.rotated) {
                     card.classList.add('rotate-180');
                 }
 
                 card.onpointerdown = (e) => handlePointerDown(e, index);
 
+                const cmdBtnHtml = startingLife !== 20 
+                    ? `<button class="cmd-btn" onclick="toggleCmdOverlay(${index})">⚔️ CMD</button>` 
+                    : '';
+
                 card.innerHTML = `
                     <div class="player-label">P${player.id + 1}</div>
-                    <button class="cmd-btn" onclick="toggleCmdOverlay(${index})">⚔️ CMD</button>
+                    ${cmdBtnHtml}
                     <div class="touch-zone touch-minus" onclick="changeLife(${index}, -1)">−</div>
                     <div class="life-total" id="life-val-${index}">${player.life}</div>
                     <div class="life-change-badge" id="life-badge-${index}"></div>
@@ -964,51 +1191,43 @@
             const modalContainer = document.getElementById('cmd-modal-container');
             modalContainer.innerHTML = '';
 
-            if (activeCmdOverlay !== null) {
+            if (activeCmdOverlay !== null && startingLife !== 20) {
                 const victimIndex = activeCmdOverlay;
                 const player = playersData[victimIndex];
-                const isRotated = (playerCount === 2 && victimIndex === 0) || 
-                                  (playerCount >= 3 && (victimIndex === 0 || victimIndex === 1));
 
                 const modal = document.createElement('div');
                 modal.className = 'cmd-fullscreen-modal';
-                
-                modal.onclick = (e) => {
-                    if (e.target === modal) toggleCmdOverlay(null);
-                };
+                modal.onclick = (e) => { if (e.target === modal) toggleCmdOverlay(null); };
 
                 let contentHtml = `
-                    <div class="cmd-modal-content ${isRotated ? 'rotate-180' : ''}">
+                    <div class="cmd-modal-content ${player.rotated ? 'rotate-180' : ''}">
                         <div class="cmd-header">
                             <span class="cmd-overlay-title">${translations[currentLang].cmdTitle} P${player.id + 1}</span>
                             <button class="cmd-close-btn-top" onclick="toggleCmdOverlay(null)">OK</button>
                         </div>
                 `;
 
-                Object.keys(player.cmdDamage).forEach(attackerIdx => {
-                    const dmgVal = player.cmdDamage[attackerIdx];
-                    const attackerPlayer = playersData.find(p => p.id === parseInt(attackerIdx)) || { colorClass: '', id: attackerIdx };
+                Object.keys(player.cmdDamage).forEach(attackerId => {
+                    const dmgVal = player.cmdDamage[attackerId];
+                    const attackerPlayer = playersData.find(p => p.id === parseInt(attackerId)) || { colorClass: '', id: attackerId };
                     const isDeadly = dmgVal >= 21;
 
                     contentHtml += `
                         <div class="cmd-row">
                             <div class="cmd-player-tag">
                                 <div class="cmd-color-dot ${attackerPlayer.colorClass}"></div>
-                                <span>P${parseInt(attackerIdx) + 1}</span>
+                                <span>P${parseInt(attackerId) + 1}</span>
                             </div>
                             <div class="cmd-controls">
-                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerIdx}, -1)">-</button>
+                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerId}, -1)">-</button>
                                 <span class="cmd-value ${isDeadly ? 'danger' : ''}">${dmgVal}${isDeadly ? ' 💀' : ''}</span>
-                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerIdx}, 1)">+</button>
+                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerId}, 1)">+</button>
                             </div>
                         </div>
                     `;
                 });
 
-                contentHtml += `
-                    </div>
-                `;
-
+                contentHtml += `</div>`;
                 modal.innerHTML = contentHtml;
                 modalContainer.appendChild(modal);
             }
