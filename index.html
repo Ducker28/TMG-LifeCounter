@@ -412,11 +412,13 @@
         .face-6 .pos-tl, .face-6 .pos-tr, .face-6 .pos-ml, .face-6 .pos-mr, .face-6 .pos-bl, .face-6 .pos-br { display: block; }
 
         .dice-result-text {
-            font-size: 3.2rem;
-            font-weight: 900;
+            font-size: 1.5rem;
+            font-weight: 800;
             margin-top: 25px;
             min-height: 55px;
             color: #ffffff;
+            text-align: center;
+            padding: 0 20px;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
@@ -857,7 +859,7 @@
         </div>
         
         <div style="margin-bottom: 10px;">
-            <button class="sub-btn" id="btn-roll-dice-trigger" onclick="rollDice()" style="background: #d3202a; border-color: #ff5252; padding: 10px 20px; font-size: 0.95rem;">🎲 Hodit kostkou</button>
+            <button class="sub-btn" id="btn-roll-dice-trigger" onclick="openDiceRollModal()" style="background: #d3202a; border-color: #ff5252; padding: 10px 20px; font-size: 0.95rem;">🎲 Hodit kostkou</button>
         </div>
 
         <!-- Výběr barvy pro vybraný slot -->
@@ -892,7 +894,7 @@
             </div>
         </div>
         <div class="dice-result-text" id="dice-result-text"></div>
-        <button class="sub-btn" id="btn-roll-again" onclick="rollDice()" style="margin-top: 15px; padding: 12px 24px; font-size: 1rem; background: #2a2a2a;">🔄 Hodit znovu</button>
+        <button class="sub-btn" id="dice-action-btn" onclick="executeCurrentRoll()" style="margin-top: 15px; padding: 12px 24px; font-size: 1rem; background: #2a2a2a;">🎲 Hodit za P1</button>
     </div>
 
     <!-- 5. HERNÍ OBRAZOVKA -->
@@ -978,7 +980,6 @@
                 cmdTitle: "CMD Damage pro",
                 selectedSlot: "Vybrán",
                 rollDiceBtn: "🎲 Hodit kostkou",
-                rollAgainBtn: "🔄 Hodit znovu",
                 layout1Bot2Top: "1 Dole / 2 Nahoře",
                 layout1Top2Bot: "1 Nahoře / 2 Dole",
                 back: "Zpět"
@@ -993,7 +994,6 @@
                 cmdTitle: "CMD Damage to",
                 selectedSlot: "Selected",
                 rollDiceBtn: "🎲 Roll Dice",
-                rollAgainBtn: "🎲 Roll Again",
                 layout1Bot2Top: "1 Bottom / 2 Top",
                 layout1Top2Bot: "1 Top / 2 Bottom",
                 back: "Back"
@@ -1033,7 +1033,6 @@
             document.getElementById('btn-start-game').innerText = t.start;
             document.getElementById('btn-menu').innerText = `⚙️ ${t.menu}`;
             document.getElementById('btn-roll-dice-trigger').innerText = t.rollDiceBtn;
-            document.getElementById('btn-roll-again').innerText = t.rollAgainBtn;
             
             document.querySelectorAll('.txt-back').forEach(el => el.innerText = t.back);
             
@@ -1118,7 +1117,7 @@
             }
         }
 
-        /* 3D KOSTKY LOGIKA */
+        /* 3D KOSTKY & SEKVENČNÍ HÁZENÍ */
         const diceOrientations = {
             1: { x: 0, y: 0 },
             2: { x: 0, y: 180 },
@@ -1128,22 +1127,45 @@
             6: { x: -90, y: 0 }
         };
 
-        function rollDice() {
+        let diceParticipants = [];
+        let diceQueue = [];
+        let isTieBreak = false;
+
+        function openDiceRollModal() {
+            diceParticipants = setupSlots.map(s => ({
+                id: s.id,
+                roll: null
+            }));
+            // Seřadit podle ID hráče (od P1 vzestupně)
+            diceParticipants.sort((a, b) => a.id - b.id);
+            diceQueue = [...diceParticipants];
+            isTieBreak = false;
+
             const modal = document.getElementById('dice-modal');
-            const resultText = document.getElementById('dice-result-text');
+            modal.classList.add('show');
+            updateDiceModalUI();
+        }
+
+        function executeCurrentRoll() {
+            if (diceQueue.length === 0) {
+                document.getElementById('dice-modal').classList.remove('show');
+                return;
+            }
+
+            const currentPlayer = diceQueue[0];
             const bounceWrapper = document.getElementById('dice-bounce-wrapper');
             const cube1 = document.getElementById('cube1');
             const cube2 = document.getElementById('cube2');
+            const resultText = document.getElementById('dice-result-text');
+            const actionBtn = document.getElementById('dice-action-btn');
 
-            modal.classList.add('show');
-            resultText.innerText = "";
-            
             bounceWrapper.classList.remove('animating');
             void bounceWrapper.offsetWidth; 
             bounceWrapper.classList.add('animating');
 
             const val1 = Math.floor(Math.random() * 6) + 1;
             const val2 = Math.floor(Math.random() * 6) + 1;
+            const rollSum = val1 + val2;
 
             const extraRotX1 = (Math.floor(Math.random() * 3) + 4) * 360;
             const extraRotY1 = (Math.floor(Math.random() * 3) + 4) * 360;
@@ -1157,11 +1179,82 @@
             cube2.style.transform = `rotateX(${target2.x + extraRotX2}deg) rotateY(${target2.y + extraRotY2}deg)`;
 
             if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+            actionBtn.disabled = true;
 
             setTimeout(() => {
-                const sum = val1 + val2;
-                resultText.innerText = `${sum}`;
+                currentPlayer.roll = rollSum;
+                resultText.innerText = (currentLang === 'cs') ? `Hráč ${currentPlayer.id + 1} hodil: ${rollSum}` : `Player ${currentPlayer.id + 1} rolled: ${rollSum}`;
+                
+                diceQueue.shift();
+                actionBtn.disabled = false;
+
+                if (diceQueue.length > 0) {
+                    updateDiceModalUI();
+                } else {
+                    evaluateDiceResults();
+                }
             }, 1400);
+        }
+
+        function evaluateDiceResults() {
+            let maxRoll = -1;
+            diceParticipants.forEach(p => {
+                if (p.roll !== null && p.roll > maxRoll) {
+                    maxRoll = p.roll;
+                }
+            });
+
+            const highestPlayers = diceParticipants.filter(p => p.roll === maxRoll);
+            const resultText = document.getElementById('dice-result-text');
+            const actionBtn = document.getElementById('dice-action-btn');
+
+            if (highestPlayers.length === 1) {
+                // Jasný vítěz hodu
+                const winner = highestPlayers[0];
+                if (currentLang === 'cs') {
+                    resultText.innerHTML = `<span style="color: #4eff81;">Hráč ${winner.id + 1} vyhrál hod (${maxRoll}) a má právo výběru!</span>`;
+                    actionBtn.innerText = "Zavřít";
+                } else {
+                    resultText.innerHTML = `<span style="color: #4eff81;">Player ${winner.id + 1} won the roll (${maxRoll}) and has choice!</span>`;
+                    actionBtn.innerText = "Close";
+                }
+                actionBtn.onclick = () => {
+                    document.getElementById('dice-modal').classList.remove('show');
+                };
+            } else {
+                // Shoda (remíza) u více hráčů -> rozstřel
+                isTieBreak = true;
+                diceQueue = highestPlayers.map(hp => {
+                    hp.roll = null;
+                    return hp;
+                });
+
+                if (currentLang === 'cs') {
+                    resultText.innerHTML = `<span style="color: #ffcc00;">Shoda (${maxRoll}). Rozstřel pro: ${diceQueue.map(p => 'Hráč ' + (p.id + 1)).join(', ')}</span>`;
+                    actionBtn.innerText = "Pokračovat v rozstřelu";
+                } else {
+                    resultText.innerHTML = `<span style="color: #ffcc00;">Tie (${maxRoll}). Re-roll for: ${diceQueue.map(p => 'Player ' + (p.id + 1)).join(', ')}</span>`;
+                    actionBtn.innerText = "Continue Tie-Breaker";
+                }
+                actionBtn.onclick = executeCurrentRoll;
+            }
+        }
+
+        function updateDiceModalUI() {
+            const resultText = document.getElementById('dice-result-text');
+            const actionBtn = document.getElementById('dice-action-btn');
+
+            if (diceQueue.length > 0) {
+                const nextPlayer = diceQueue[0];
+                if (currentLang === 'cs') {
+                    resultText.innerText = isTieBreak ? `Rozstřel – na řadě je Hráč ${nextPlayer.id + 1}` : `Na řadě je Hráč ${nextPlayer.id + 1}`;
+                    actionBtn.innerText = `🎲 Hodit za Hráče ${nextPlayer.id + 1}`;
+                } else {
+                    resultText.innerText = isTieBreak ? `Tie-breaker – Player ${nextPlayer.id + 1}'s turn` : `Player ${nextPlayer.id + 1}'s turn`;
+                    actionBtn.innerText = `🎲 Roll for Player ${nextPlayer.id + 1}`;
+                }
+                actionBtn.onclick = executeCurrentRoll;
+            }
         }
 
         function closeDiceModal(e) {
@@ -1256,7 +1349,6 @@
             setupDraggedIndex = null;
             document.querySelectorAll('.slot').forEach(s => s.classList.remove('dragging', 'drag-over'));
             
-            // Automaticky upravit rotaci podle nové pozice
             updateSlotRotationsByPosition();
             updateSetupUI();
         }
