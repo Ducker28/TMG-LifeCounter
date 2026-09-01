@@ -323,7 +323,7 @@
             background: #555;
         }
 
-        /* 3D KOSTKY STYLY */
+        /* 3D KOSTKY & MODALY STYLY */
         .dice-modal {
             position: fixed;
             top: 0;
@@ -448,6 +448,33 @@
             overflow: hidden;
         }
 
+        /* HERNÍ NOTIFIKAČNÍ HLÁŠKA NAD TABULKOU */
+        .game-notification {
+            position: absolute;
+            top: max(20px, env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: rgba(211, 32, 42, 0.96);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 16px;
+            font-weight: 900;
+            font-size: 1.05rem;
+            z-index: 999;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            pointer-events: none;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .game-notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         /* PLOVOUCÍ DROPDOWN MENU */
         .menu-container {
             position: absolute;
@@ -559,12 +586,37 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            z-index: 2;
+            z-index: 10;
             pointer-events: none;
         }
 
         .player-content.rotate-content {
             transform: rotate(180deg);
+        }
+
+        /* CMD TLAČÍTKO */
+        .cmd-btn {
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-bottom: 8px;
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .cmd-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95);
         }
 
         /* Fixní dotykové zóny */
@@ -597,7 +649,6 @@
             line-height: 1;
             pointer-events: none;
             letter-spacing: -2px;
-            margin-top: 15px;
         }
 
         .life-change-badge {
@@ -637,158 +688,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
-        .cmd-btn {
-            position: absolute;
-            top: 15px;
-            z-index: 5;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            color: #fff;
-            padding: 7px 16px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-            pointer-events: auto;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        @media (orientation: landscape) {
-            .cmd-btn {
-                top: 10px;
-                padding: 4px 12px;
-                font-size: 0.75rem;
-                border-radius: 8px;
-            }
-        }
-
-        .cmd-fullscreen-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(10, 10, 12, 0.96);
-            backdrop-filter: blur(12px);
-            z-index: 200;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .cmd-modal-content {
-            width: 100%;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .cmd-modal-content.rotate-180 {
-            transform: rotate(180deg);
-        }
-
-        .cmd-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .cmd-overlay-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .cmd-close-btn-top {
-            background: #d3202a;
-            color: #fff;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .cmd-close-btn-top:active {
-            transform: scale(0.95);
-        }
-
-        .cmd-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 18px;
-            border-radius: 12px;
-        }
-
-        .cmd-player-tag {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .cmd-color-dot {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            display: inline-block;
-        }
-
-        .cmd-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .cmd-btn-small {
-            background: #2a2a2a;
-            color: #fff;
-            border: 1px solid #555;
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.1s, transform 0.1s;
-        }
-
-        .cmd-btn-small:active {
-            background: #444;
-            transform: scale(0.92);
-        }
-
-        .cmd-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            min-width: 35px;
-            text-align: center;
-        }
-
-        .cmd-value.danger {
-            color: #ff4d4d;
-            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8);
-        }
     </style>
 </head>
 <body>
@@ -825,8 +724,8 @@
         <div class="back-btn-container"><button class="back-btn" onclick="showScreen('screen-lang')">← <span class="txt-back">Zpět</span></button></div>
         <h1 id="txt-select-life">Počáteční životy</h1>
         <div class="btn-group">
-            <button class="menu-btn" onclick="selectStartingLife(20)">20</button>
-            <button class="menu-btn" onclick="selectStartingLife(40)">40</button>
+            <button class="menu-btn" onclick="selectStartingLife(20)">STANDARD</button>
+            <button class="menu-btn" onclick="selectStartingLife(40)">COMMANDER</button>
         </div>
     </div>
 
@@ -897,6 +796,15 @@
         <button class="sub-btn" id="dice-action-btn" onclick="executeCurrentRoll()" style="margin-top: 15px; padding: 12px 24px; font-size: 1rem; background: #2a2a2a;">🎲 Hodit za P1</button>
     </div>
 
+    <!-- MODAL COMMANDER DAMAGE -->
+    <div id="cmd-modal" class="dice-modal" onclick="closeCmdModal(event)">
+        <div style="width: 90%; max-width: 340px; background: #16161a; border: 1px solid #333; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+            <h2 id="cmd-modal-title" style="color: #fff; margin-bottom: 15px; font-size: 1.2rem;">Commander Damage</h2>
+            <div id="cmd-list" style="width: 100%; display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button class="sub-btn" onclick="closeCmdModalForce()" style="width: 100%; padding: 10px; background: #2a2a2a;">Zavřít</button>
+        </div>
+    </div>
+
     <!-- 5. HERNÍ OBRAZOVKA -->
     <div id="game-screen" class="screen">
         <!-- PLOVOUCÍ DROPDOWN MENU -->
@@ -907,8 +815,12 @@
                 <button class="dropdown-item" id="btn-menu" onclick="exitToMenu()">⚙️ Menu</button>
             </div>
         </div>
+        
+        <!-- HERNÍ MŘÍŽKA -->
         <div id="grid"></div>
-        <div id="cmd-modal-container"></div>
+
+        <!-- NOTIFIKACE PROHRY (UMÍSTĚNA AŽ ZA MŘÍŽKOU S VYSOKÝM Z-INDEXEM) -->
+        <div id="game-notification" class="game-notification"></div>
     </div>
 
     <script>
@@ -977,7 +889,6 @@
                 start: "Spustit hru",
                 reset: "Reset",
                 menu: "Menu",
-                cmdTitle: "CMD Damage pro",
                 selectedSlot: "Vybrán",
                 rollDiceBtn: "🎲 Hodit kostkou",
                 layout1Bot2Top: "1 Dole / 2 Nahoře",
@@ -991,7 +902,6 @@
                 start: "Start Game",
                 reset: "Reset",
                 menu: "Menu",
-                cmdTitle: "CMD Damage to",
                 selectedSlot: "Selected",
                 rollDiceBtn: "🎲 Roll Dice",
                 layout1Bot2Top: "1 Bottom / 2 Top",
@@ -1012,7 +922,6 @@
         let startingLife = 40;
         let playerCount = 4;
         let playersData = [];
-        let activeCmdOverlay = null;
 
         /* SETUP CONFIGURATION STATE */
         let activeSlotIndex = 0;
@@ -1370,19 +1279,22 @@
         function initPlayersData() {
             playersData = [];
             setupSlots.forEach((slot, i) => {
-                let cmdDmgMap = {};
-                setupSlots.forEach((otherSlot, j) => {
-                    if (i !== j) cmdDmgMap[otherSlot.id] = 0;
-                });
-
                 playersData.push({
                     id: slot.id,
                     life: startingLife,
                     colorClass: slot.colorClass,
                     rotated: slot.rotated,
-                    cmdDamage: cmdDmgMap,
                     currentDelta: 0,
-                    deltaTimer: null
+                    deltaTimer: null,
+                    cmdDamage: {}
+                });
+            });
+
+            playersData.forEach(p => {
+                playersData.forEach(op => {
+                    if (op.id !== p.id) {
+                        p.cmdDamage[op.id] = 0;
+                    }
                 });
             });
         }
@@ -1402,7 +1314,6 @@
         function resetGame() {
             document.getElementById('dropdown-menu').classList.remove('show');
             initPlayersData();
-            activeCmdOverlay = null;
             renderGame();
         }
 
@@ -1425,23 +1336,92 @@
                 player.deltaTimer = setTimeout(() => {
                     badgeEl.classList.remove('show');
                     setTimeout(() => { player.currentDelta = 0; }, 200);
-                }, 2100); // Zkráceno o 25% (z 2800 na 2100 ms)
+                }, 2100);
             }
         }
 
-        function toggleCmdOverlay(index) {
-            if (startingLife === 20) return;
-            activeCmdOverlay = activeCmdOverlay === index ? null : index;
-            renderGame();
+        /* COMMANDER DAMAGE LOGIKA & NOTIFIKACE */
+        let activeCmdPlayerIndex = null;
+        let notificationTimeout = null;
+
+        function showGameNotification(message) {
+            const notif = document.getElementById('game-notification');
+            if (!notif) return;
+            notif.innerText = message;
+            notif.classList.add('show');
+
+            clearTimeout(notificationTimeout);
+            notificationTimeout = setTimeout(() => {
+                notif.classList.remove('show');
+            }, 4500);
         }
 
-        function changeCmdDamage(victimIndex, attackerId, amount) {
-            const currentDmg = playersData[victimIndex].cmdDamage[attackerId] || 0;
-            if (currentDmg + amount < 0) return;
+        function openCmdModal(index) {
+            activeCmdPlayerIndex = index;
+            const player = playersData[index];
+            const modal = document.getElementById('cmd-modal');
+            const title = document.getElementById('cmd-modal-title');
+            const list = document.getElementById('cmd-list');
 
-            playersData[victimIndex].cmdDamage[attackerId] = currentDmg + amount;
-            playersData[victimIndex].life -= amount;
-            renderGame();
+            title.innerText = `Commander Damage – P${player.id + 1}`;
+            list.innerHTML = '';
+
+            playersData.forEach((opponent, opIndex) => {
+                if (opponent.id === player.id) return;
+
+                const currentDmg = player.cmdDamage[opponent.id] || 0;
+
+                const row = document.createElement('div');
+                row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 10px;";
+                
+                row.innerHTML = `
+                    <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%;" class="${opponent.colorClass}"></span>
+                        P${opponent.id + 1}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="sub-btn" style="padding: 6px 14px;" onclick="adjustCmdDamage(${index}, ${opponent.id}, -1)">-</button>
+                        <span style="font-size: 1.2rem; font-weight: bold; min-width: 25px; text-align: center;">${currentDmg}</span>
+                        <button class="sub-btn" style="padding: 6px 14px;" onclick="adjustCmdDamage(${index}, ${opponent.id}, 1)">+</button>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+
+            modal.classList.add('show');
+        }
+
+        function adjustCmdDamage(playerIndex, opponentId, amount) {
+            const player = playersData[playerIndex];
+            if (player.cmdDamage[opponentId] === undefined) {
+                player.cmdDamage[opponentId] = 0;
+            }
+            player.cmdDamage[opponentId] = Math.max(0, player.cmdDamage[opponentId] + amount);
+            
+            // Pravidlo: 21+ commander damage od jednoho hráče znamená 0 HP + hláška o prohře
+            if (player.cmdDamage[opponentId] >= 21) {
+                player.life = 0;
+                const msg = (currentLang === 'cs') ? `Hráč ${player.id + 1} prohrál` : `Player ${player.id + 1} has lost`;
+                showGameNotification(msg);
+            }
+
+            // Okamžitá aktualizace životů na hrací ploše
+            const lifeEl = document.getElementById(`life-val-${playerIndex}`);
+            if (lifeEl) {
+                lifeEl.innerText = player.life;
+            }
+
+            openCmdModal(playerIndex);
+        }
+
+        function closeCmdModal(e) {
+            if (e.target.id === 'cmd-modal') {
+                document.getElementById('cmd-modal').classList.remove('show');
+            }
+        }
+
+        function closeCmdModalForce() {
+            document.getElementById('cmd-modal').classList.remove('show');
         }
 
         /* IN-GAME DRAG & DROP LOGIKA */
@@ -1450,7 +1430,7 @@
         let isDragging = false;
 
         function handlePointerDown(e, index) {
-            if (e.target.closest('.cmd-btn') || e.target.closest('.touch-zone')) return;
+            if (e.target.closest('.touch-zone') || e.target.closest('.cmd-btn')) return;
 
             draggedIndex = index;
             const targetCard = e.currentTarget;
@@ -1522,21 +1502,22 @@
 
                 card.onpointerdown = (e) => handlePointerDown(e, index);
 
-                const cmdBtnHtml = startingLife !== 20 
-                    ? `<button class="cmd-btn" onclick="toggleCmdOverlay(${index})">⚔️ CMD</button>` 
-                    : '';
-
                 const leftSymbol = player.rotated ? '+' : '−';
                 const leftAmount = player.rotated ? 1 : -1;
                 const rightSymbol = player.rotated ? '−' : '+';
                 const rightAmount = player.rotated ? -1 : 1;
 
+                let cmdButtonHtml = '';
+                if (startingLife === 40) {
+                    cmdButtonHtml = `<button class="cmd-btn" onpointerdown="event.stopPropagation();" onclick="event.stopPropagation(); openCmdModal(${index})">⚔️ CMD</button>`;
+                }
+
                 card.innerHTML = `
                     <div class="touch-zone touch-left" onpointerdown="event.stopPropagation(); changeLife(${index}, ${leftAmount})">${leftSymbol}</div>
                     <div class="touch-zone touch-right" onpointerdown="event.stopPropagation(); changeLife(${index}, ${rightAmount})">${rightSymbol}</div>
                     <div class="player-content ${player.rotated ? 'rotate-content' : ''}">
+                        ${cmdButtonHtml}
                         <div class="player-label">P${player.id + 1}</div>
-                        ${cmdBtnHtml}
                         <div class="life-total" id="life-val-${index}">${player.life}</div>
                         <div class="life-change-badge" id="life-badge-${index}"></div>
                     </div>
@@ -1544,51 +1525,6 @@
 
                 grid.appendChild(card);
             });
-
-            // MODAL OVERLAY
-            const modalContainer = document.getElementById('cmd-modal-container');
-            modalContainer.innerHTML = '';
-
-            if (activeCmdOverlay !== null && startingLife !== 20) {
-                const victimIndex = activeCmdOverlay;
-                const player = playersData[victimIndex];
-
-                const modal = document.createElement('div');
-                modal.className = 'cmd-fullscreen-modal';
-                modal.onclick = (e) => { if (e.target === modal) toggleCmdOverlay(null); };
-
-                let contentHtml = `
-                    <div class="cmd-modal-content ${player.rotated ? 'rotate-180' : ''}">
-                        <div class="cmd-header">
-                            <span class="cmd-overlay-title">${translations[currentLang].cmdTitle} P${player.id + 1}</span>
-                            <button class="cmd-close-btn-top" onclick="toggleCmdOverlay(null)">OK</button>
-                        </div>
-                `;
-
-                Object.keys(player.cmdDamage).forEach(attackerId => {
-                    const dmgVal = player.cmdDamage[attackerId];
-                    const attackerPlayer = playersData.find(p => p.id === parseInt(attackerId)) || { colorClass: '', id: attackerId };
-                    const isDeadly = dmgVal >= 21;
-
-                    contentHtml += `
-                        <div class="cmd-row">
-                            <div class="cmd-player-tag">
-                                <div class="cmd-color-dot ${attackerPlayer.colorClass}"></div>
-                                <span>P${parseInt(attackerId) + 1}</span>
-                            </div>
-                            <div class="cmd-controls">
-                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerId}, -1)">-</button>
-                                <span class="cmd-value ${isDeadly ? 'danger' : ''}">${dmgVal}${isDeadly ? ' 💀' : ''}</span>
-                                <button class="cmd-btn-small" onclick="changeCmdDamage(${victimIndex}, ${attackerId}, 1)">+</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                contentHtml += `</div>`;
-                modal.innerHTML = contentHtml;
-                modalContainer.appendChild(modal);
-            }
         }
     </script>
 </body>
