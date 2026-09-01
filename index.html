@@ -942,7 +942,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             splashTimeout = setTimeout(() => {
                 hideSplash();
-            }, 2800);
+            }, 2100);
         });
 
         function hideSplash() {
@@ -1065,18 +1065,17 @@
             startColorSetup();
         }
 
-        // Automatické určení rotace podle toho, zda je slot v horní nebo dolní řadě
         function updateSlotRotationsByPosition() {
             setupSlots.forEach((slot, index) => {
                 if (playerCount === 2) {
-                    slot.rotated = (index === 0); // Index 0 je nahoře
+                    slot.rotated = (index === 0);
                 } else if (playerCount === 4) {
-                    slot.rotated = (index === 0 || index === 1); // Index 0 a 1 jsou nahoře
+                    slot.rotated = (index === 0 || index === 1);
                 } else if (playerCount === 3) {
                     if (currentLayoutClass === 'players-3-bottom-span') {
-                        slot.rotated = (index === 0 || index === 1); // Slot 0 a 1 jsou nahoře
+                        slot.rotated = (index === 0 || index === 1);
                     } else if (currentLayoutClass === 'players-3-top-span') {
-                        slot.rotated = (index === 0); // Slot 0 je nahoře
+                        slot.rotated = (index === 0);
                     }
                 }
             });
@@ -1136,7 +1135,6 @@
                 id: s.id,
                 roll: null
             }));
-            // Seřadit podle ID hráče (od P1 vzestupně)
             diceParticipants.sort((a, b) => a.id - b.id);
             diceQueue = [...diceParticipants];
             isTieBreak = false;
@@ -1209,7 +1207,6 @@
             const actionBtn = document.getElementById('dice-action-btn');
 
             if (highestPlayers.length === 1) {
-                // Jasný vítěz hodu
                 const winner = highestPlayers[0];
                 if (currentLang === 'cs') {
                     resultText.innerHTML = `<span style="color: #4eff81;">Hráč ${winner.id + 1} vyhrál hod (${maxRoll}) a má právo výběru!</span>`;
@@ -1222,7 +1219,6 @@
                     document.getElementById('dice-modal').classList.remove('show');
                 };
             } else {
-                // Shoda (remíza) u více hráčů -> rozstřel
                 isTieBreak = true;
                 diceQueue = highestPlayers.map(hp => {
                     hp.roll = null;
@@ -1429,7 +1425,7 @@
                 player.deltaTimer = setTimeout(() => {
                     badgeEl.classList.remove('show');
                     setTimeout(() => { player.currentDelta = 0; }, 200);
-                }, 1200);
+                }, 2100); // Zkráceno o 25% (z 2800 na 2100 ms)
             }
         }
 
@@ -1495,14 +1491,19 @@
                         }
                     }
                 }
+                isDragging = false;
+                draggedIndex = null;
+                document.querySelectorAll('.player-card').forEach(card => {
+                    card.classList.remove('dragging', 'drag-over');
+                });
+                renderGame();
+            } else {
+                isDragging = false;
+                draggedIndex = null;
+                document.querySelectorAll('.player-card').forEach(card => {
+                    card.classList.remove('dragging', 'drag-over');
+                });
             }
-
-            isDragging = false;
-            draggedIndex = null;
-            document.querySelectorAll('.player-card').forEach(card => {
-                card.classList.remove('dragging', 'drag-over');
-            });
-            renderGame();
         }
 
         function renderGame() {
