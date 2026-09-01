@@ -438,6 +438,25 @@
             animation: diceBounce 1.2s cubic-bezier(0.28, 0.84, 0.42, 1);
         }
 
+        /* COMMANDER DAMAGE TABULKA / MODAL BOX S MOŽNOSTÍ OTOČENÍ */
+        .cmd-modal-box {
+            width: 90%;
+            max-width: 340px;
+            background: #16161a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            transition: transform 0.2s ease;
+        }
+
+        .cmd-modal-box.rotated {
+            transform: rotate(180deg);
+        }
+
         /* HERNÍ OBRAZOVKA */
         #game-screen {
             position: relative;
@@ -798,7 +817,7 @@
 
     <!-- MODAL COMMANDER DAMAGE -->
     <div id="cmd-modal" class="dice-modal" onclick="closeCmdModal(event)">
-        <div style="width: 90%; max-width: 340px; background: #16161a; border: 1px solid #333; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+        <div id="cmd-modal-box" class="cmd-modal-box">
             <h2 id="cmd-modal-title" style="color: #fff; margin-bottom: 15px; font-size: 1.2rem;">Commander Damage</h2>
             <div id="cmd-list" style="width: 100%; display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto; margin-bottom: 15px;"></div>
             <button class="sub-btn" onclick="closeCmdModalForce()" style="width: 100%; padding: 10px; background: #2a2a2a;">Zavřít</button>
@@ -819,7 +838,7 @@
         <!-- HERNÍ MŘÍŽKA -->
         <div id="grid"></div>
 
-        <!-- NOTIFIKACE PROHRY (UMÍSTĚNA AŽ ZA MŘÍŽKOU S VYSOKÝM Z-INDEXEM) -->
+        <!-- NOTIFIKACE PROHRY -->
         <div id="game-notification" class="game-notification"></div>
     </div>
 
@@ -1360,8 +1379,16 @@
             activeCmdPlayerIndex = index;
             const player = playersData[index];
             const modal = document.getElementById('cmd-modal');
+            const modalBox = document.getElementById('cmd-modal-box');
             const title = document.getElementById('cmd-modal-title');
             const list = document.getElementById('cmd-list');
+
+            // Automatické otočení celé tabulky podle toho, zda je hráč otočený (např. nahoře)
+            if (player.rotated) {
+                modalBox.classList.add('rotated');
+            } else {
+                modalBox.classList.remove('rotated');
+            }
 
             title.innerText = `Commander Damage – P${player.id + 1}`;
             list.innerHTML = '';
@@ -1398,14 +1425,12 @@
             }
             player.cmdDamage[opponentId] = Math.max(0, player.cmdDamage[opponentId] + amount);
             
-            // Pravidlo: 21+ commander damage od jednoho hráče znamená 0 HP + hláška o prohře
             if (player.cmdDamage[opponentId] >= 21) {
                 player.life = 0;
                 const msg = (currentLang === 'cs') ? `Hráč ${player.id + 1} prohrál` : `Player ${player.id + 1} has lost`;
                 showGameNotification(msg);
             }
 
-            // Okamžitá aktualizace životů na hrací ploše
             const lifeEl = document.getElementById(`life-val-${playerIndex}`);
             if (lifeEl) {
                 lifeEl.innerText = player.life;
