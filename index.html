@@ -125,9 +125,36 @@
             padding: 20px;
             text-align: center;
             overflow-y: auto;
+            position: relative;
         }
 
         .screen.active { display: flex; }
+
+        /* TLAČÍTKO ZPĚT */
+        .back-btn-container {
+            position: absolute;
+            top: max(16px, env(safe-area-inset-top));
+            left: max(16px, env(safe-area-inset-left));
+            z-index: 20;
+        }
+
+        .back-btn {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-btn:active {
+            background: #444;
+        }
 
         h1 { font-size: 1.8rem; margin-bottom: 25px; color: #e0e0e0; }
         h2 { font-size: 1.1rem; margin-bottom: 10px; color: #aaa; }
@@ -204,7 +231,6 @@
             gap: 4px;
         }
 
-        /* Varianty rozložení */
         .table-preview.players-2 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr; }
         .table-preview.players-4 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
         
@@ -213,8 +239,6 @@
         
         .table-preview.players-3-top-span { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
         .table-preview.players-3-top-span .slot:nth-child(1) { grid-column: span 2; }
-        
-        .table-preview.players-3-cols { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr 1fr; }
 
         .slot {
             border-radius: 10px;
@@ -254,6 +278,8 @@
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .opt-btn {
@@ -278,6 +304,7 @@
             gap: 10px;
             align-items: center;
             margin-bottom: 10px;
+            justify-content: center;
         }
 
         .sub-btn {
@@ -294,6 +321,119 @@
 
         .sub-btn:active {
             background: #555;
+        }
+
+        /* 3D KOSTKY STYLY */
+        .dice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 10, 12, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .dice-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dice-scene {
+            width: 260px;
+            height: 140px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            perspective: 800px;
+        }
+
+        .cube-container {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.8s cubic-bezier(0.2, 0.8, 0.25, 1);
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #ffffff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.2), 0 4px 10px rgba(0,0,0,0.5);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .dot {
+            background-color: #1a1a1a;
+            border-radius: 50%;
+            align-self: center;
+            justify-self: center;
+            width: 10px;
+            height: 10px;
+            display: none;
+        }
+
+        .face-1 { transform: rotateY(0deg) translateZ(30px); }
+        .face-2 { transform: rotateY(180deg) translateZ(30px); }
+        .face-3 { transform: rotateY(-90deg) translateZ(30px); }
+        .face-4 { transform: rotateY(90deg) translateZ(30px); }
+        .face-5 { transform: rotateX(-90deg) translateZ(30px); }
+        .face-6 { transform: rotateX(90deg) translateZ(30px); }
+
+        .pos-tl { grid-area: 1 / 1; }
+        .pos-tr { grid-area: 1 / 3; }
+        .pos-ml { grid-area: 2 / 1; }
+        .pos-c  { grid-area: 2 / 2; }
+        .pos-mr { grid-area: 2 / 3; }
+        .pos-bl { grid-area: 3 / 1; }
+        .pos-br { grid-area: 3 / 3; }
+
+        .face-1 .pos-c { display: block; background-color: #d3202a; }
+        .face-2 .pos-tl, .face-2 .pos-br { display: block; }
+        .face-3 .pos-tl, .face-3 .pos-c, .face-3 .pos-br { display: block; }
+        .face-4 .pos-tl, .face-4 .pos-tr, .face-4 .pos-bl, .face-4 .pos-br { display: block; }
+        .face-5 .pos-tl, .face-5 .pos-tr, .face-5 .pos-c, .face-5 .pos-bl, .face-5 .pos-br { display: block; }
+        .face-6 .pos-tl, .face-6 .pos-tr, .face-6 .pos-ml, .face-6 .pos-mr, .face-6 .pos-bl, .face-6 .pos-br { display: block; }
+
+        .dice-result-text {
+            font-size: 3.2rem;
+            font-weight: 900;
+            margin-top: 25px;
+            min-height: 55px;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes diceBounce {
+            0% { transform: translateY(-120px) scale(0.6); }
+            50% { transform: translateY(0px) scale(1.1); }
+            70% { transform: translateY(-25px) scale(0.95); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+
+        .dice-bounce-wrapper {
+            display: flex;
+            gap: 40px;
+        }
+
+        .dice-bounce-wrapper.animating {
+            animation: diceBounce 1.2s cubic-bezier(0.28, 0.84, 0.42, 1);
         }
 
         /* HERNÍ OBRAZOVKA */
@@ -380,7 +520,6 @@
         .players-3-bottom-span .player-card:nth-child(3) { grid-column: span 2; }
         .players-3-top-span { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
         .players-3-top-span .player-card:nth-child(1) { grid-column: span 2; }
-        .players-3-cols { grid-template-rows: 1fr; grid-template-columns: 1fr 1fr 1fr; }
         .players-4 { grid-template-rows: 1fr 1fr; grid-template-columns: 1fr 1fr; }
 
         @media (orientation: landscape) {
@@ -394,12 +533,11 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+            transition: filter 0.15s ease, box-shadow 0.15s ease;
         }
 
         .player-card.dragging {
             opacity: 0.8;
-            transform: scale(0.95);
             z-index: 100;
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
             border: 2px solid #fff;
@@ -410,9 +548,24 @@
             filter: brightness(1.2);
         }
 
-        .rotate-180 { transform: rotate(180deg); }
-        .player-card.dragging.rotate-180 { transform: rotate(180deg) scale(0.95); }
+        /* Vnitřní obsah karty, který se rotuje pro horní hráče */
+        .player-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
 
+        .player-content.rotate-content {
+            transform: rotate(180deg);
+        }
+
+        /* Fixní dotykové zóny */
         .touch-zone {
             position: absolute;
             top: 0;
@@ -423,11 +576,13 @@
             font-size: 2.5rem;
             font-weight: 300;
             opacity: 0.2;
-            z-index: 1;
+            z-index: 3;
+            cursor: pointer;
+            touch-action: none;
         }
 
-        .touch-minus { left: 0; justify-content: flex-start; padding-left: 15px; }
-        .touch-plus { right: 0; justify-content: flex-end; padding-right: 15px; }
+        .touch-left { left: 0; justify-content: flex-start; padding-left: 25px; }
+        .touch-right { right: 0; justify-content: flex-end; padding-right: 25px; }
 
         .touch-zone:active {
             opacity: 0.5;
@@ -438,7 +593,6 @@
             font-size: clamp(3.5rem, 18vmin, 7.5rem);
             font-weight: 800;
             line-height: 1;
-            z-index: 2;
             pointer-events: none;
             letter-spacing: -2px;
             margin-top: 15px;
@@ -477,7 +631,6 @@
             font-size: 0.85rem;
             font-weight: 800;
             opacity: 0.6;
-            z-index: 2;
             pointer-events: none;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -495,6 +648,7 @@
             font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
+            pointer-events: auto;
             backdrop-filter: blur(4px);
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
@@ -529,6 +683,10 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+        }
+
+        .cmd-modal-content.rotate-180 {
+            transform: rotate(180deg);
         }
 
         .cmd-header {
@@ -662,6 +820,7 @@
 
     <!-- 2. VÝBĚR POČÁTEČNÍCH ŽIVOTŮ -->
     <div id="screen-starting-life" class="screen">
+        <div class="back-btn-container"><button class="back-btn" onclick="showScreen('screen-lang')">← <span class="txt-back">Zpět</span></button></div>
         <h1 id="txt-select-life">Počáteční životy</h1>
         <div class="btn-group">
             <button class="menu-btn" onclick="selectStartingLife(20)">20</button>
@@ -671,6 +830,7 @@
 
     <!-- 3. VÝBĚR POČTU HRÁČŮ -->
     <div id="screen-players" class="screen">
+        <div class="back-btn-container"><button class="back-btn" onclick="showScreen('screen-starting-life')">← <span class="txt-back">Zpět</span></button></div>
         <h1 id="txt-select-players">Počet hráčů</h1>
         <div class="btn-group">
             <button class="menu-btn" onclick="selectPlayerCount(2)">2</button>
@@ -681,6 +841,7 @@
 
     <!-- 4. NASTAVENÍ STOLU & BAREV -->
     <div id="screen-colors" class="screen">
+        <div class="back-btn-container"><button class="back-btn" onclick="showScreen('screen-players')">← <span class="txt-back">Zpět</span></button></div>
         <h1 id="txt-select-colors">Rozvržení a Barvy</h1>
         
         <!-- Přepínač rozvržení (pro 3 hráče) -->
@@ -693,15 +854,45 @@
 
         <div class="controls-row">
             <h2 id="txt-selected-slot-info" style="margin:0;">Vybráno: P1</h2>
-            <button class="sub-btn" id="btn-toggle-rotate" onclick="toggleCurrentSlotRotation()">🔄 Rotovat (180°)</button>
         </div>
         
+        <div style="margin-bottom: 10px;">
+            <button class="sub-btn" id="btn-roll-dice-trigger" onclick="rollDice()" style="background: #d3202a; border-color: #ff5252; padding: 10px 20px; font-size: 0.95rem;">🎲 Hodit kostkou</button>
+        </div>
+
         <!-- Výběr barvy pro vybraný slot -->
         <div class="color-grid" id="color-options"></div>
 
         <div style="margin-top: 20px;">
             <button class="menu-btn" id="btn-start-game" onclick="launchGame()">Spustit hru</button>
         </div>
+    </div>
+
+    <!-- MODAL 3D KOSTKY -->
+    <div id="dice-modal" class="dice-modal" onclick="closeDiceModal(event)">
+        <div class="dice-scene">
+            <div class="dice-bounce-wrapper" id="dice-bounce-wrapper">
+                <div class="cube-container" id="cube1">
+                    <div class="cube-face face-1"><div class="dot pos-c"></div></div>
+                    <div class="cube-face face-2"><div class="dot pos-tl"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-3"><div class="dot pos-tl"></div><div class="dot pos-c"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-4"><div class="dot pos-tl"></div><div class="dot pos-tr"></div><div class="dot pos-bl"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-5"><div class="dot pos-tl"></div><div class="dot pos-tr"></div><div class="dot pos-c"></div><div class="dot pos-bl"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-6"><div class="dot pos-tl"></div><div class="dot pos-tr"></div><div class="dot pos-ml"></div><div class="dot pos-mr"></div><div class="dot pos-bl"></div><div class="dot pos-br"></div></div>
+                </div>
+
+                <div class="cube-container" id="cube2">
+                    <div class="cube-face face-1"><div class="dot pos-c"></div></div>
+                    <div class="cube-face face-2"><div class="dot pos-tl"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-3"><div class="dot pos-tl"></div><div class="dot pos-c"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-4"><div class="dot pos-tl"></div><div class="dot pos-tr"></div><div class="dot pos-bl"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-5"><div class="dot pos-tl"></div><div class="dot pos-tr"></div><div class="dot pos-c"></div><div class="dot pos-bl"></div><div class="dot pos-br"></div></div>
+                    <div class="cube-face face-6"><div class="dot pos-tl"></div><div class="dot pos-tr"></div><div class="dot pos-ml"></div><div class="dot pos-mr"></div><div class="dot pos-bl"></div><div class="dot pos-br"></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="dice-result-text" id="dice-result-text"></div>
+        <button class="sub-btn" id="btn-roll-again" onclick="rollDice()" style="margin-top: 15px; padding: 12px 24px; font-size: 1rem; background: #2a2a2a;">🔄 Hodit znovu</button>
     </div>
 
     <!-- 5. HERNÍ OBRAZOVKA -->
@@ -786,10 +977,11 @@
                 menu: "Menu",
                 cmdTitle: "CMD Damage pro",
                 selectedSlot: "Vybrán",
-                rotateBtn: "🔄 Otočit (180°)",
+                rollDiceBtn: "🎲 Hodit kostkou",
+                rollAgainBtn: "🔄 Hodit znovu",
                 layout1Bot2Top: "1 Dole / 2 Nahoře",
                 layout1Top2Bot: "1 Nahoře / 2 Dole",
-                layout3Cols: "3 Vedle sebe"
+                back: "Zpět"
             },
             en: {
                 selectLife: "Starting Life Total",
@@ -800,10 +992,11 @@
                 menu: "Menu",
                 cmdTitle: "CMD Damage to",
                 selectedSlot: "Selected",
-                rotateBtn: "🔄 Rotate (180°)",
+                rollDiceBtn: "🎲 Roll Dice",
+                rollAgainBtn: "🎲 Roll Again",
                 layout1Bot2Top: "1 Bottom / 2 Top",
                 layout1Top2Bot: "1 Top / 2 Bottom",
-                layout3Cols: "3 Side-by-side"
+                back: "Back"
             }
         };
 
@@ -824,7 +1017,7 @@
         /* SETUP CONFIGURATION STATE */
         let activeSlotIndex = 0;
         let currentLayoutClass = 'players-4';
-        let setupSlots = []; // Array of objects { id, colorClass, rotated }
+        let setupSlots = [];
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -833,12 +1026,17 @@
 
         function selectLang(lang) {
             currentLang = lang;
-            document.getElementById('txt-select-life').innerText = translations[lang].selectLife;
-            document.getElementById('txt-select-players').innerText = translations[lang].selectPlayers;
-            document.getElementById('txt-select-colors').innerText = translations[lang].selectColors;
-            document.getElementById('btn-start-game').innerText = translations[lang].start;
-            document.getElementById('btn-menu').innerText = `⚙️ ${translations[lang].menu}`;
-            document.getElementById('btn-toggle-rotate').innerText = translations[lang].rotateBtn;
+            const t = translations[lang];
+            document.getElementById('txt-select-life').innerText = t.selectLife;
+            document.getElementById('txt-select-players').innerText = t.selectPlayers;
+            document.getElementById('txt-select-colors').innerText = t.selectColors;
+            document.getElementById('btn-start-game').innerText = t.start;
+            document.getElementById('btn-menu').innerText = `⚙️ ${t.menu}`;
+            document.getElementById('btn-roll-dice-trigger').innerText = t.rollDiceBtn;
+            document.getElementById('btn-roll-again').innerText = t.rollAgainBtn;
+            
+            document.querySelectorAll('.txt-back').forEach(el => el.innerText = t.back);
+            
             showScreen('screen-starting-life');
         }
 
@@ -858,15 +1056,31 @@
             else currentLayoutClass = 'players-4';
 
             for (let i = 0; i < playerCount; i++) {
-                const isRotatedDefault = (playerCount === 2 && i === 0) || (playerCount >= 3 && (i === 0 || i === 1));
                 setupSlots.push({
                     id: i,
-                    colorClass: manaColors[i % manaColors.length].id,
-                    rotated: isRotatedDefault
+                    colorClass: manaColors[i % manaColors.length].id
                 });
             }
 
+            updateSlotRotationsByPosition();
             startColorSetup();
+        }
+
+        // Automatické určení rotace podle toho, zda je slot v horní nebo dolní řadě
+        function updateSlotRotationsByPosition() {
+            setupSlots.forEach((slot, index) => {
+                if (playerCount === 2) {
+                    slot.rotated = (index === 0); // Index 0 je nahoře
+                } else if (playerCount === 4) {
+                    slot.rotated = (index === 0 || index === 1); // Index 0 a 1 jsou nahoře
+                } else if (playerCount === 3) {
+                    if (currentLayoutClass === 'players-3-bottom-span') {
+                        slot.rotated = (index === 0 || index === 1); // Slot 0 a 1 jsou nahoře
+                    } else if (currentLayoutClass === 'players-3-top-span') {
+                        slot.rotated = (index === 0); // Slot 0 je nahoře
+                    }
+                }
+            });
         }
 
         function startColorSetup() {
@@ -884,8 +1098,7 @@
                 const t = translations[currentLang];
                 const layouts = [
                     { id: 'players-3-bottom-span', label: t.layout1Bot2Top },
-                    { id: 'players-3-top-span', label: t.layout1Top2Bot },
-                    { id: 'players-3-cols', label: t.layout3Cols }
+                    { id: 'players-3-top-span', label: t.layout1Top2Bot }
                 ];
 
                 layouts.forEach(l => {
@@ -894,6 +1107,7 @@
                     btn.innerText = l.label;
                     btn.onclick = () => {
                         currentLayoutClass = l.id;
+                        updateSlotRotationsByPosition();
                         renderLayoutOptions();
                         updateSetupUI();
                     };
@@ -904,10 +1118,55 @@
             }
         }
 
-        function toggleCurrentSlotRotation() {
-            if (setupSlots[activeSlotIndex]) {
-                setupSlots[activeSlotIndex].rotated = !setupSlots[activeSlotIndex].rotated;
-                updateSetupUI();
+        /* 3D KOSTKY LOGIKA */
+        const diceOrientations = {
+            1: { x: 0, y: 0 },
+            2: { x: 0, y: 180 },
+            3: { x: 0, y: 90 },
+            4: { x: 0, y: -90 },
+            5: { x: 90, y: 0 },
+            6: { x: -90, y: 0 }
+        };
+
+        function rollDice() {
+            const modal = document.getElementById('dice-modal');
+            const resultText = document.getElementById('dice-result-text');
+            const bounceWrapper = document.getElementById('dice-bounce-wrapper');
+            const cube1 = document.getElementById('cube1');
+            const cube2 = document.getElementById('cube2');
+
+            modal.classList.add('show');
+            resultText.innerText = "";
+            
+            bounceWrapper.classList.remove('animating');
+            void bounceWrapper.offsetWidth; 
+            bounceWrapper.classList.add('animating');
+
+            const val1 = Math.floor(Math.random() * 6) + 1;
+            const val2 = Math.floor(Math.random() * 6) + 1;
+
+            const extraRotX1 = (Math.floor(Math.random() * 3) + 4) * 360;
+            const extraRotY1 = (Math.floor(Math.random() * 3) + 4) * 360;
+            const extraRotX2 = (Math.floor(Math.random() * 3) + 4) * 360;
+            const extraRotY2 = (Math.floor(Math.random() * 3) + 4) * 360;
+
+            const target1 = diceOrientations[val1];
+            const target2 = diceOrientations[val2];
+
+            cube1.style.transform = `rotateX(${target1.x + extraRotX1}deg) rotateY(${target1.y + extraRotY1}deg)`;
+            cube2.style.transform = `rotateX(${target2.x + extraRotX2}deg) rotateY(${target2.y + extraRotY2}deg)`;
+
+            if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+
+            setTimeout(() => {
+                const sum = val1 + val2;
+                resultText.innerText = `${sum}`;
+            }, 1400);
+        }
+
+        function closeDiceModal(e) {
+            if (e.target.id === 'dice-modal') {
+                document.getElementById('dice-modal').classList.remove('show');
             }
         }
 
@@ -948,7 +1207,6 @@
                 preview.appendChild(slot);
             });
 
-            // Vykreslení výběru barev
             const grid = document.getElementById('color-options');
             grid.innerHTML = '';
 
@@ -997,6 +1255,9 @@
             }
             setupDraggedIndex = null;
             document.querySelectorAll('.slot').forEach(s => s.classList.remove('dragging', 'drag-over'));
+            
+            // Automaticky upravit rotaci podle nové pozice
+            updateSlotRotationsByPosition();
             updateSetupUI();
         }
 
@@ -1101,7 +1362,7 @@
         let isDragging = false;
 
         function handlePointerDown(e, index) {
-            if (e.target.closest('.cmd-btn')) return;
+            if (e.target.closest('.cmd-btn') || e.target.closest('.touch-zone')) return;
 
             draggedIndex = index;
             const targetCard = e.currentTarget;
@@ -1149,6 +1410,7 @@
             document.querySelectorAll('.player-card').forEach(card => {
                 card.classList.remove('dragging', 'drag-over');
             });
+            renderGame();
         }
 
         function renderGame() {
@@ -1165,23 +1427,26 @@
                 card.className = `player-card ${player.colorClass}`;
                 card.dataset.index = index;
 
-                if (player.rotated) {
-                    card.classList.add('rotate-180');
-                }
-
                 card.onpointerdown = (e) => handlePointerDown(e, index);
 
                 const cmdBtnHtml = startingLife !== 20 
                     ? `<button class="cmd-btn" onclick="toggleCmdOverlay(${index})">⚔️ CMD</button>` 
                     : '';
 
+                const leftSymbol = player.rotated ? '+' : '−';
+                const leftAmount = player.rotated ? 1 : -1;
+                const rightSymbol = player.rotated ? '−' : '+';
+                const rightAmount = player.rotated ? -1 : 1;
+
                 card.innerHTML = `
-                    <div class="player-label">P${player.id + 1}</div>
-                    ${cmdBtnHtml}
-                    <div class="touch-zone touch-minus" onclick="changeLife(${index}, -1)">−</div>
-                    <div class="life-total" id="life-val-${index}">${player.life}</div>
-                    <div class="life-change-badge" id="life-badge-${index}"></div>
-                    <div class="touch-zone touch-plus" onclick="changeLife(${index}, 1)">+</div>
+                    <div class="touch-zone touch-left" onpointerdown="event.stopPropagation(); changeLife(${index}, ${leftAmount})">${leftSymbol}</div>
+                    <div class="touch-zone touch-right" onpointerdown="event.stopPropagation(); changeLife(${index}, ${rightAmount})">${rightSymbol}</div>
+                    <div class="player-content ${player.rotated ? 'rotate-content' : ''}">
+                        <div class="player-label">P${player.id + 1}</div>
+                        ${cmdBtnHtml}
+                        <div class="life-total" id="life-val-${index}">${player.life}</div>
+                        <div class="life-change-badge" id="life-badge-${index}"></div>
+                    </div>
                 `;
 
                 grid.appendChild(card);
