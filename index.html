@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MTG Life Counter - MTG LifeCounter</title>
-
-    <!-- IKONA NA PLOCHU (PWA & iOS) -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;defs&gt;&lt;linearGradient id='fire' x1='0%25' y1='0%25' x2='0%25' y2='100%25'&gt;&lt;stop offset='0%25' stop-color='%23ff5500'/&gt;&lt;stop offset='50%25' stop-color='%23e63900'/&gt;&lt;stop offset='100%25' stop-color='%23b30000'/&gt;&lt;/linearGradient&gt;&lt;linearGradient id='card' x1='0%25' y1='0%25' x2='100%25' y2='100%25'&gt;&lt;stop offset='0%25' stop-color='%232a2a2a'/&gt;&lt;stop offset='100%25' stop-color='%23111111'/&gt;&lt;/linearGradient&gt;&lt;filter id='glow'&gt;&lt;feGaussianBlur stdDeviation='3' result='coloredBlur'/&gt;&lt;feMerge&gt;&lt;feMergeNode in='coloredBlur'/&gt;&lt;feMergeNode in='SourceGraphic'/&gt;&lt;/feMerge&gt;&lt;/filter&gt;&lt;/defs&gt;&lt;rect width='512' height='512' rx='110' fill='%23121212'/&gt;&lt;rect x='120' y='110' width='100' height='145' rx='10' fill='url(%23card)' stroke='%23444' stroke-width='4' transform='rotate(-18 170 182)' opacity='0.7'/&gt;&lt;rect x='292' y='110' width='100' height='145' rx='10' fill='url(%23card)' stroke='%23444' stroke-width='4' transform='rotate(18 342 182)' opacity='0.7'/&gt;&lt;path d='M256,40 L228,120 C215,125 165,100 165,100 C165,100 205,180 205,180 C190,185 140,205 140,205 C140,205 220,250 225,255 C235,265 256,410 256,410 C256,410 277,265 287,255 C292,250 372,205 372,205 C372,205 322,185 307,180 C307,180 347,100 347,100 C347,100 297,125 284,120 Z' fill='url(%23fire)' stroke='%23ffcc00' stroke-width='3.5' filter='url(%23glow)'/&gt;&lt;text x='256' y='475' font-size='42' font-family='Arial, sans-serif' font-weight='900' fill='%23ffffff' text-anchor='middle' letter-spacing='2'&gt;MTG LifeCounter&lt;/text&gt;&lt;/svg&gt;">
-    <link rel="manifest" href='data:application/json;charset=utf-8,%7B%22name%22%3A%22MTG%20Life%20Counter%22%2C%22short_name%22%3A%22MTG%20LifeCounter%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23121212%22%2C%22theme_color%22%3A%22%23121212%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%253Butf8,%253Csvg%2520xmlns%253D%2527http%253A%2F%2Fwww.w3.org%2F2000%2Fsvg%2527%2520viewBox%253D%25270%25200%2520512%2520512%2527%253E%253Cdefs%253E%253ClinearGradient%2520id%253D%2527fire%2527%2520x1%253D%25270%2525%2527%2520y1%253D%25270%2525%2527%2520x2%253D%25270%2525%2527%2520y2%253D%2527100%2525%2527%253E%253Cstop%2520offset%253D%25270%2525%2527%2520stop-color%253D%2527%2523ff5500%2527%2F%253E%253Cstop%2520offset%253D%252750%2525%2527%2520stop-color%253D%2527%2523e63900%2527%2F%253E%253Cstop%2520offset%253D%2527100%2525%2527%2520stop-color%253D%2527%2523b30000%2527%2F%253E%253C%2FlinearGradient%253E%253ClinearGradient%2520id%253D%2527card%2527%2520x1%253D%25270%2525%2527%2520y1%253D%25270%2525%2527%2520x2%253D%2527100%2525%2527%2520y2%253D%2527100%2525%2527%253E%253Cstop%2520offset%253D%25270%2525%2527%2520stop-color%253D%2527%25232a2a2a%2527%2F%253E%253Cstop%2520offset%253D%2527100%2525%2527%2520stop-color%253D%2527%2523111111%2527%2F%253E%253C%2FlinearGradient%253E%253Cfilter%2520id%253D%2527glow%2527%253E%253CfeGaussianBlur%2520stdDeviation%253D%25273%2527%2520result%253D%2527coloredBlur%2527%2F%253E%253CfeMerge%253E%253CfeMergeNode%2520in%253D%2527coloredBlur%2527%2F%253E%253CfeMergeNode%2520in%253D%2527SourceGraphic%2527%2F%253E%253C%2FfeMerge%253E%253C%2FFilter%253E%253C%2Fdefs%253E%253Crect%2520width%253D%2527512%2527%2520height%253D%2527512%2527%2520rx%253D%2527110%2527%2520fill%253D%2527%2523121212%2527%2F%253E%253Crect%2520x%253D%2527120%2527%2520y%253D%2527110%2527%2520width%253D%2527100%2527%2520height%253D%2527145%2527%2520rx%253D%252710%2527%2520fill%253D%2527url(%2523card)%2527%2520stroke%253D%2527%2523444%2527%2520stroke-width%253D%25274%2527%2520transform%253D%2527rotate(-18%2520170%2520182)%2527%2520opacity%253D%25270.7%2527%2F%253E%253Crect%2520x%253D%2527292%2527%2520y%253D%2527110%2527%2520width%253D%2527100%2527%2520height%253D%2527145%2527%2520rx%253D%252710%2527%2520fill%253D%2527url(%2523card)%2527%2520stroke%253D%2527%2523444%2527%2520stroke-width%253D%25274%2527%2520transform%253D%2527rotate(18%2520342%2520182)%2527%2520opacity%253D%25270.7%2527%2F%253E%253Cpath%2520d%253D%2527M256,40%2520L228,120%2520C215,125%2520165,100%2520165,100%2520C165,100%2520205,180%2520205,180%2520C190,185%2520140,205%2520140,205%2520C140,205%2520220,250%2520225,255%2520C235,265%2520256,410%2520256,410%2520C256,410%2520277,265%2520287,255%2520C292,250%2520372,205%2520372,205%2520C372,205%2520322,185%2520307,180%2520C307,180%2520347,100%2520347,100%2520C347,100%2520297,125%2520284,120%2520Z%2527%2520fill%253D%2527url(%2523fire)%2527%2520stroke%253D%2527%2523ffcc00%2527%2520stroke-width%253D%25273.5%2527%2520filter%253D%2527url(%2523glow)%2527%2F%253E%253Ctext%2520x%253D%2527256%2527%2520y%253D%2527475%2527%2520font-size%253D%252742%2527%2520font-family%253D%2527Arial,%2520sans-serif%2527%2520font-weight%253D%2527900%2527%2520fill%253D%2527%2523ffffff%2527%2520text-anchor%253D%2527middle%2527%2520letter-spacing%253D%25272%2527%253EMTG%2520LifeCounter%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg+xml%22%7D%5D%7D'>
-
+    <title>MTG Life Counter</title>
     <style>
         * {
             box-sizing: border-box;
@@ -53,8 +48,8 @@
 
         .wave-text {
             display: flex;
-            gap: 4px;
-            font-size: 2.5rem;
+            gap: 2px;
+            font-size: 3.2rem;
             font-weight: 900;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -71,16 +66,12 @@
         }
 
         .wave-text span:nth-child(1) { animation-delay: 0.1s; }
-        .wave-text span:nth-child(2) { animation-delay: 0.15s; }
-        .wave-text span:nth-child(3) { animation-delay: 0.2s; }
-        .wave-text span:nth-child(4) { animation-delay: 0.25s; }
-        .wave-text span:nth-child(5) { animation-delay: 0.3s; }
-        .wave-text span:nth-child(6) { animation-delay: 0.35s; }
-        .wave-text span:nth-child(7) { animation-delay: 0.4s; }
-        .wave-text span:nth-child(8) { animation-delay: 0.45s; }
-        .wave-text span:nth-child(9) { animation-delay: 0.5s; }
-        .wave-text span:nth-child(10) { animation-delay: 0.55s; }
-        .wave-text span:nth-child(11) { animation-delay: 0.6s; }
+        .wave-text span:nth-child(2) { animation-delay: 0.2s; }
+        .wave-text span:nth-child(3) { animation-delay: 0.3s; }
+        .wave-text span:nth-child(4) { animation-delay: 0.4s; }
+        .wave-text span:nth-child(5) { animation-delay: 0.5s; }
+        .wave-text span:nth-child(6) { animation-delay: 0.6s; }
+        .wave-text span:nth-child(7) { animation-delay: 0.7s; }
 
         @keyframes waveIn {
             0% { opacity: 0; transform: translateY(40px) scale(0.8); }
@@ -447,6 +438,7 @@
             animation: diceBounce 1.2s cubic-bezier(0.28, 0.84, 0.42, 1);
         }
 
+        /* COMMANDER DAMAGE TABULKA / MODAL BOX S MOŽNOSTÍ OTOČENÍ */
         .cmd-modal-box {
             width: 90%;
             max-width: 340px;
@@ -475,6 +467,7 @@
             overflow: hidden;
         }
 
+        /* HERNÍ NOTIFIKAČNÍ HLÁŠKA NAD TABULKOU */
         .game-notification {
             position: absolute;
             top: max(20px, env(safe-area-inset-top));
@@ -501,6 +494,7 @@
             opacity: 1;
         }
 
+        /* PLOVOUCÍ DROPDOWN MENU */
         .menu-container {
             position: absolute;
             top: max(12px, env(safe-area-inset-top));
@@ -602,6 +596,7 @@
             filter: brightness(1.2);
         }
 
+        /* Vnitřní obsah karty, který se rotuje pro horní hráče */
         .player-content {
             position: relative;
             display: flex;
@@ -618,6 +613,7 @@
             transform: rotate(180deg);
         }
 
+        /* CMD TLAČÍTKO */
         .cmd-btn {
             pointer-events: auto;
             background: rgba(0, 0, 0, 0.45);
@@ -642,6 +638,7 @@
             transform: scale(0.95);
         }
 
+        /* Fixní dotykové zóny */
         .touch-zone {
             position: absolute;
             top: 0;
@@ -717,14 +714,13 @@
     <!-- 0. ÚVODNÍ ANIMACE (SPLASH SCREEN) -->
     <div id="splash-screen" onclick="skipSplash()">
         <div class="wave-text">
-            <span>M</span>
-            <span>T</span>
-            <span>G</span>
-            <span>&nbsp;</span>
-            <span>L</span>
-            <span>i</span>
-            <span>f</span>
-            <span>e</span>
+            <span>A</span>
+            <span>d</span>
+            <span>a</span>
+            <span>m</span>
+            <span>o</span>
+            <span>v</span>
+            <span>o</span>
         </div>
         <div class="card-fan">
             <div class="card card-1"></div>
@@ -768,8 +764,10 @@
         <div class="back-btn-container"><button class="back-btn" onclick="showScreen('screen-players')">← <span class="txt-back">Zpět</span></button></div>
         <h1 id="txt-select-colors">Rozvržení a Barvy</h1>
         
+        <!-- Přepínač rozvržení (pro 3 hráče) -->
         <div id="layout-selector-container" class="layout-options" style="display: none;"></div>
 
+        <!-- Náhled mřížky stolu s Drag & Drop -->
         <div class="preview-container">
             <div id="table-preview" class="table-preview"></div>
         </div>
@@ -782,6 +780,7 @@
             <button class="sub-btn" id="btn-roll-dice-trigger" onclick="openDiceRollModal()" style="background: #d3202a; border-color: #ff5252; padding: 10px 20px; font-size: 0.95rem;">🎲 Hodit kostkou</button>
         </div>
 
+        <!-- Výběr barvy pro vybraný slot -->
         <div class="color-grid" id="color-options"></div>
 
         <div style="margin-top: 20px;">
@@ -827,6 +826,7 @@
 
     <!-- 5. HERNÍ OBRAZOVKA -->
     <div id="game-screen" class="screen">
+        <!-- PLOVOUCÍ DROPDOWN MENU -->
         <div class="menu-container">
             <button class="dots-btn" onclick="toggleMenu(event)">⋮</button>
             <div class="dropdown-menu" id="dropdown-menu">
@@ -835,7 +835,10 @@
             </div>
         </div>
         
+        <!-- HERNÍ MŘÍŽKA -->
         <div id="grid"></div>
+
+        <!-- NOTIFIKACE PROHRY -->
         <div id="game-notification" class="game-notification"></div>
     </div>
 
@@ -847,13 +850,17 @@
             if ('wakeLock' in navigator) {
                 try {
                     wakeLock = await navigator.wakeLock.request('screen');
-                } catch (err) {}
+                } catch (err) {
+                    console.warn(`Wake Lock Error: ${err.name}, ${err.message}`);
+                }
             }
         }
 
         function releaseWakeLock() {
             if (wakeLock !== null) {
-                wakeLock.release().then(() => { wakeLock = null; });
+                wakeLock.release().then(() => {
+                    wakeLock = null;
+                });
             }
         }
 
@@ -864,7 +871,9 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            splashTimeout = setTimeout(() => { hideSplash(); }, 2100);
+            splashTimeout = setTimeout(() => {
+                hideSplash();
+            }, 2100);
         });
 
         function hideSplash() {
@@ -890,6 +899,7 @@
             menu.classList.toggle('show');
         }
 
+        /* LOCALIZATION STRINGS */
         const translations = {
             cs: {
                 selectLife: "Počáteční počet životů",
@@ -932,6 +942,7 @@
         let playerCount = 4;
         let playersData = [];
 
+        /* SETUP CONFIGURATION STATE */
         let activeSlotIndex = 0;
         let currentLayoutClass = 'players-4';
         let setupSlots = [];
@@ -952,6 +963,7 @@
             document.getElementById('btn-roll-dice-trigger').innerText = t.rollDiceBtn;
             
             document.querySelectorAll('.txt-back').forEach(el => el.innerText = t.back);
+            
             showScreen('screen-starting-life');
         }
 
@@ -1032,6 +1044,7 @@
             }
         }
 
+        /* 3D KOSTKY & SEKVENČNÍ HÁZENÍ */
         const diceOrientations = {
             1: { x: 0, y: 0 },
             2: { x: 0, y: 180 },
@@ -1046,12 +1059,16 @@
         let isTieBreak = false;
 
         function openDiceRollModal() {
-            diceParticipants = setupSlots.map(s => ({ id: s.id, roll: null }));
+            diceParticipants = setupSlots.map(s => ({
+                id: s.id,
+                roll: null
+            }));
             diceParticipants.sort((a, b) => a.id - b.id);
             diceQueue = [...diceParticipants];
             isTieBreak = false;
 
-            document.getElementById('dice-modal').classList.add('show');
+            const modal = document.getElementById('dice-modal');
+            modal.classList.add('show');
             updateDiceModalUI();
         }
 
@@ -1108,7 +1125,9 @@
         function evaluateDiceResults() {
             let maxRoll = -1;
             diceParticipants.forEach(p => {
-                if (p.roll !== null && p.roll > maxRoll) maxRoll = p.roll;
+                if (p.roll !== null && p.roll > maxRoll) {
+                    maxRoll = p.roll;
+                }
             });
 
             const highestPlayers = diceParticipants.filter(p => p.roll === maxRoll);
@@ -1118,16 +1137,21 @@
             if (highestPlayers.length === 1) {
                 const winner = highestPlayers[0];
                 if (currentLang === 'cs') {
-                    resultText.innerHTML = `<span style="color: #4eff81;">Hráč ${winner.id + 1} vyhrál hod (${maxRoll})!</span>`;
+                    resultText.innerHTML = `<span style="color: #4eff81;">Hráč ${winner.id + 1} vyhrál hod (${maxRoll}) a má právo výběru!</span>`;
                     actionBtn.innerText = "Zavřít";
                 } else {
-                    resultText.innerHTML = `<span style="color: #4eff81;">Player ${winner.id + 1} won the roll (${maxRoll})!</span>`;
+                    resultText.innerHTML = `<span style="color: #4eff81;">Player ${winner.id + 1} won the roll (${maxRoll}) and has choice!</span>`;
                     actionBtn.innerText = "Close";
                 }
-                actionBtn.onclick = () => { document.getElementById('dice-modal').classList.remove('show'); };
+                actionBtn.onclick = () => {
+                    document.getElementById('dice-modal').classList.remove('show');
+                };
             } else {
                 isTieBreak = true;
-                diceQueue = highestPlayers.map(hp => { hp.roll = null; return hp; });
+                diceQueue = highestPlayers.map(hp => {
+                    hp.roll = null;
+                    return hp;
+                });
 
                 if (currentLang === 'cs') {
                     resultText.innerHTML = `<span style="color: #ffcc00;">Shoda (${maxRoll}). Rozstřel pro: ${diceQueue.map(p => 'Hráč ' + (p.id + 1)).join(', ')}</span>`;
@@ -1163,6 +1187,7 @@
             }
         }
 
+        /* DRAG & DROP PRO PREVIEW SETUP */
         let setupDraggedIndex = null;
 
         function updateSetupUI() {
@@ -1186,6 +1211,7 @@
                 const label = document.createElement('span');
                 if (slotData.rotated) label.className = 'slot-rotate';
                 label.innerText = `P${slotData.id + 1}`;
+                
                 slot.appendChild(label);
 
                 slot.onpointerdown = (e) => {
@@ -1255,18 +1281,23 @@
             initPlayersData();
 
             try {
-                if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
-                if (screen.orientation && screen.orientation.lock) await screen.orientation.lock('landscape');
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen();
+                }
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
             } catch (e) {}
 
             await requestWakeLock();
+
             renderGame();
             showScreen('game-screen');
         }
 
         function initPlayersData() {
             playersData = [];
-            setupSlots.forEach((slot) => {
+            setupSlots.forEach((slot, i) => {
                 playersData.push({
                     id: slot.id,
                     life: startingLife,
@@ -1280,15 +1311,21 @@
 
             playersData.forEach(p => {
                 playersData.forEach(op => {
-                    if (op.id !== p.id) p.cmdDamage[op.id] = 0;
+                    if (op.id !== p.id) {
+                        p.cmdDamage[op.id] = 0;
+                    }
                 });
             });
         }
 
         function exitToMenu() {
             document.getElementById('dropdown-menu').classList.remove('show');
-            if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().catch(() => {});
-            if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+            if (document.exitFullscreen && document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
             releaseWakeLock();
             showScreen('screen-lang');
         }
@@ -1310,6 +1347,7 @@
             const badgeEl = document.getElementById(`life-badge-${index}`);
             if (badgeEl) {
                 clearTimeout(player.deltaTimer);
+
                 const prefix = player.currentDelta > 0 ? '+' : '';
                 badgeEl.innerText = `${prefix}${player.currentDelta}`;
                 badgeEl.className = 'life-change-badge show ' + (player.currentDelta > 0 ? 'plus' : 'minus');
@@ -1321,6 +1359,8 @@
             }
         }
 
+        /* COMMANDER DAMAGE LOGIKA & NOTIFIKACE */
+        let activeCmdPlayerIndex = null;
         let notificationTimeout = null;
 
         function showGameNotification(message) {
@@ -1330,28 +1370,37 @@
             notif.classList.add('show');
 
             clearTimeout(notificationTimeout);
-            notificationTimeout = setTimeout(() => { notif.classList.remove('show'); }, 4500);
+            notificationTimeout = setTimeout(() => {
+                notif.classList.remove('show');
+            }, 4500);
         }
 
         function openCmdModal(index) {
+            activeCmdPlayerIndex = index;
             const player = playersData[index];
             const modal = document.getElementById('cmd-modal');
             const modalBox = document.getElementById('cmd-modal-box');
             const title = document.getElementById('cmd-modal-title');
             const list = document.getElementById('cmd-list');
 
-            if (player.rotated) modalBox.classList.add('rotated');
-            else modalBox.classList.remove('rotated');
+            // Automatické otočení celé tabulky podle toho, zda je hráč otočený (např. nahoře)
+            if (player.rotated) {
+                modalBox.classList.add('rotated');
+            } else {
+                modalBox.classList.remove('rotated');
+            }
 
             title.innerText = `Commander Damage – P${player.id + 1}`;
             list.innerHTML = '';
 
-            playersData.forEach((opponent) => {
+            playersData.forEach((opponent, opIndex) => {
                 if (opponent.id === player.id) return;
+
                 const currentDmg = player.cmdDamage[opponent.id] || 0;
 
                 const row = document.createElement('div');
                 row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 10px;";
+                
                 row.innerHTML = `
                     <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
                         <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%;" class="${opponent.colorClass}"></span>
@@ -1371,7 +1420,9 @@
 
         function adjustCmdDamage(playerIndex, opponentId, amount) {
             const player = playersData[playerIndex];
-            if (player.cmdDamage[opponentId] === undefined) player.cmdDamage[opponentId] = 0;
+            if (player.cmdDamage[opponentId] === undefined) {
+                player.cmdDamage[opponentId] = 0;
+            }
             player.cmdDamage[opponentId] = Math.max(0, player.cmdDamage[opponentId] + amount);
             
             if (player.cmdDamage[opponentId] >= 21) {
@@ -1381,25 +1432,31 @@
             }
 
             const lifeEl = document.getElementById(`life-val-${playerIndex}`);
-            if (lifeEl) lifeEl.innerText = player.life;
+            if (lifeEl) {
+                lifeEl.innerText = player.life;
+            }
 
             openCmdModal(playerIndex);
         }
 
         function closeCmdModal(e) {
-            if (e.target.id === 'cmd-modal') document.getElementById('cmd-modal').classList.remove('show');
+            if (e.target.id === 'cmd-modal') {
+                document.getElementById('cmd-modal').classList.remove('show');
+            }
         }
 
         function closeCmdModalForce() {
             document.getElementById('cmd-modal').classList.remove('show');
         }
 
+        /* IN-GAME DRAG & DROP LOGIKA */
         let draggedIndex = null;
         let dragTimer = null;
         let isDragging = false;
 
         function handlePointerDown(e, index) {
             if (e.target.closest('.touch-zone') || e.target.closest('.cmd-btn')) return;
+
             draggedIndex = index;
             const targetCard = e.currentTarget;
 
@@ -1423,10 +1480,11 @@
             }
         }
 
-        function handlePointerUp() {
+        function handlePointerUp(e) {
             clearTimeout(dragTimer);
+
             if (isDragging && draggedIndex !== null) {
-                const elementUnder = document.elementFromPoint(window.event.clientX, window.event.clientY);
+                const elementUnder = document.elementFromPoint(e.clientX, e.clientY);
                 if (elementUnder) {
                     const targetCard = elementUnder.closest('.player-card');
                     if (targetCard) {
@@ -1440,12 +1498,16 @@
                 }
                 isDragging = false;
                 draggedIndex = null;
-                document.querySelectorAll('.player-card').forEach(card => card.classList.remove('dragging', 'drag-over'));
+                document.querySelectorAll('.player-card').forEach(card => {
+                    card.classList.remove('dragging', 'drag-over');
+                });
                 renderGame();
             } else {
                 isDragging = false;
                 draggedIndex = null;
-                document.querySelectorAll('.player-card').forEach(card => card.classList.remove('dragging', 'drag-over'));
+                document.querySelectorAll('.player-card').forEach(card => {
+                    card.classList.remove('dragging', 'drag-over');
+                });
             }
         }
 
@@ -1462,6 +1524,7 @@
                 const card = document.createElement('div');
                 card.className = `player-card ${player.colorClass}`;
                 card.dataset.index = index;
+
                 card.onpointerdown = (e) => handlePointerDown(e, index);
 
                 const leftSymbol = player.rotated ? '+' : '−';
@@ -1484,6 +1547,7 @@
                         <div class="life-change-badge" id="life-badge-${index}"></div>
                     </div>
                 `;
+
                 grid.appendChild(card);
             });
         }
